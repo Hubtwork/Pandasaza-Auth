@@ -7,6 +7,7 @@ import { normalizePort } from './utils/helpers'
 import errorMiddleware from './middlewares/error.middlewares'
 
 import { server } from './utils/environments'
+import connection, { MariaDBConnection } from './utils/dbcon';
 
 
 class App {
@@ -40,6 +41,11 @@ class App {
     controllers.forEach((controller) => {
       this.app.use('/', controller.router);
     })
+  }
+
+  private attatchDBConnection() {
+    new MariaDBConnection().queryDB('select * from user_detail')
+    connection.connect()
   }
 
 }

@@ -165,4 +165,7 @@ Temporary Items
 !.vscode/extensions.json
 *.code-workspace
 
+# jwt secrets, etc.
+config/
+
 # End of https://www.toptal.com/developers/gitignore/api/osx,node,vscode

@@ -12,3 +12,16 @@ export const sens = {
   phone: process.env.SENS_PHONE,
   clientId: process.env.SENS_CLIENT_ID
 }
+
+export const kakao_auth = {
+  key: process.env.KAKAO_KEY,
+  redirectPath: process.env.KAKAO_REDIRECT_PATH
+}
+
+export const db = {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_DATABASE,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
+}
