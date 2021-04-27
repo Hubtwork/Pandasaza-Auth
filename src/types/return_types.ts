@@ -4,3 +4,9 @@ export type ApiResponse<T> = {
   data?: T
   errorMessage?: {}
 }
+
+export type DbRequest<T> = {
+  isSuccess: boolean
+  data?: T
+  error?: {}
+}

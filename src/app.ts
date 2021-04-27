@@ -18,6 +18,7 @@ class App {
     this.app = express()
     this.attatchMiddlewares()
     this.attatchInterceptors()
+    this.attatchDBConnection()
     this.attatchControllers(controllers)
   }
 
@@ -44,7 +45,7 @@ class App {
   }
 
   private attatchDBConnection() {
-    new MariaDBConnection().queryDB('select * from user_detail')
+    console.log(new MariaDBConnection().queryDB('select * from user_detail'))
     connection.connect()
   }
 
