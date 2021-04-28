@@ -7,6 +7,6 @@ export type ApiResponse<T> = {
 
 export type DbRequest<T> = {
   isSuccess: boolean
-  data?: T
+  data?: [T]
   error?: {}
 }

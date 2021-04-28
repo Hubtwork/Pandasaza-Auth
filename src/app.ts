@@ -7,11 +7,12 @@ import { normalizePort } from './utils/helpers'
 import errorMiddleware from './middlewares/error.middlewares'
 
 import { server } from './utils/environments'
-import connection, { MariaDBConnection } from './utils/dbcon';
-
+import { Logger } from './utils/logger';
+import { Database } from './config/database';
 
 class App {
-
+  
+  private logger: Logger = new Logger()
   public app: express.Application
   
   constructor(controllers: Controller[]){
@@ -24,8 +25,10 @@ class App {
 
   public listen() {
     const port: number = normalizePort(server.port)
-    this.app.listen(port, () => {
-      console.log(`App starts Listening on Port ${port}`)
+    Database.createConnection().then(() => {
+      this.app.listen(port, () => {
+        this.logger.info(`App starts Listening on Port ${port}`)
+      })
     })
   }
 
@@ -44,9 +47,8 @@ class App {
     })
   }
 
-  private attatchDBConnection() {
-    console.log(new MariaDBConnection().queryDB('select * from user_detail'))
-    connection.connect()
+  private async attatchDBConnection() {
+
   }
 
 }

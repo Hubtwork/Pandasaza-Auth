@@ -2,6 +2,7 @@ import maria, { Query } from 'mysql'
 import DbException from '../exceptions/DbException'
 import { DbRequest } from '../types/return_types'
 import { db } from './environments'
+import { createConnection } from 'typeorm'
 
 const connection = maria.createConnection({
     host: db.host,
@@ -10,6 +11,10 @@ const connection = maria.createConnection({
     user: db.user,
     password: db.password
 })
+
+export async function connectDB() {
+    await createConnection()
+}
 
 export class MariaDBConnection {
 
@@ -34,18 +39,17 @@ export class MariaDBConnection {
         this.connection.query(query, function(err, rows, fields) {
             if (err) throw err
             console.log(`rows : ${JSON.stringify(rows)}`)
-            console.log(``)
-            console.log(`fields : ${JSON.stringify(fields)}`)
         })
         this.disconnectDB()
     }
 
     public async query<T>(query: string): Promise<DbRequest<T>> {
         try {
-            const val = await this.createQuery<T>(query)
+            const resultArr = await this.createQuery<T>(query)
+            console.log(`${resultArr}, type: ${typeof resultArr} / ${typeof resultArr[0]}`)
             return {
                 isSuccess: true,
-                data: val
+                data: resultArr
             }
         } catch (error) {
             return {
@@ -55,13 +59,16 @@ export class MariaDBConnection {
         }
     }
 
-    private createQuery<T>(query: string): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
+    private createQuery<T>(query: string): Promise<[T]> {
+        //this.connectDB()
+        return new Promise<[T]>((resolve, reject) => {
             this.connection.query(query, (err, rows) => {
                 // error handling
                 if (err) reject(new DbException(err.message))
                 // resolve
-                resolve(rows as T)
+                const jsonString = JSON.stringify(rows)
+                const jsonRow = JSON.parse(jsonString)
+                resolve(jsonRow as [T])
             })
         })
     }
