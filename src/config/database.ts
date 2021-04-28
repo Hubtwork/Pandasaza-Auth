@@ -1,8 +1,8 @@
 
 import EventEmitter = require('events')
-import { createConnection } from 'typeorm';
-import { AuthPhone } from '../entity/entity.auth.phone';
-import { UserDetail } from '../entity/entity.userdetail';
+import { createConnection, getConnectionOptions, getConnection } from 'typeorm';
+import { AuthPhone } from '../entities/entity.auth.phone';
+import { UserDetail } from '../entities/entity.userdetail';
 import { db } from '../utils/environments'
 import { Logger } from '../utils/logger';
 
@@ -13,23 +13,19 @@ class Database {
     public static logger: any = new Logger()
 
     public static async getConnection(callback = null, wait = false) {
-        this.handleConnectionError();
-        return await Database.createConnection();
+        this.handleConnectionError()
+        return await Database.createConnection()
     }
 
-    public static async createConnection() {
-        return await createConnection({
-          type: 'mysql',
-          host: db.host,
-          port: Number(db.port),
-          username: db.user,
-          password: db.password,
-          database: db.database,
-          entities: [
-            AuthPhone,
-            UserDetail
-          ],
-        }).then(() => {
+    public static async closeConnection() {
+        await getConnection().close()
+    }
+
+    private static async createConnection() {
+        const connectionOption = await getConnectionOptions(process.env.NODE_ENV)
+        this.logger.info(JSON.stringify(connectionOption))
+        return await createConnection({...connectionOption, name: 'default'})
+        .then(() => {
           this.isConnected = true;
           this.logger.info('database connected successfully')
         }).catch((err: Error) => {
@@ -38,12 +34,12 @@ class Database {
         })
     }
 
-    public static async handleConnectionError() {
+    private static async handleConnectionError() {
         this.emitter.on('DB_CONNECT_ERROR', async () => {
-        this.logger.log('info', 'database connection error...retrying');
-        setTimeout(async () => {
-            await this.createConnection()
-            }, 3000)
+            this.logger.log('info', 'database connection error...retrying')
+            setTimeout(async () => {
+                await this.createConnection()
+                }, 3000)
         })
     }
     

@@ -25,7 +25,7 @@ class App {
 
   public listen() {
     const port: number = normalizePort(server.port)
-    Database.createConnection().then(() => {
+    Database.getConnection().then(() => {
       this.app.listen(port, () => {
         this.logger.info(`App starts Listening on Port ${port}`)
       })
