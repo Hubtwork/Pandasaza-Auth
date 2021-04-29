@@ -1,15 +1,15 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm'
 import { AuthPhone } from '../entities/entity.auth.phone'
-import { Logger } from '../utils/logger';
+import { UserDetail } from '../entities/entity.userdetail'
+import { Logger } from '../utils/logger'
 
 @EntityRepository(AuthPhone)
 export class AuthPhoneRepository extends Repository<AuthPhone> {
     private logger = new Logger()
     
-    public async insertAuthPhone(phone: string, uId: number): Promise<AuthPhone | null> {
+    public async insertAuthPhone(phone: string, userDetail: UserDetail): Promise<AuthPhone | null> {
         try {
-            const authPhone = this.create({ phone, uId })
-            this.logger.info(`[DB] AuthPhone with \'${authPhone.phone}\' successfully inserted`)
+            const authPhone = this.create({ userDetail, phone })
             return this.save(authPhone)
         } catch(error) {
             this.logger.error(`[DB] AuthPhone with \'${phone}\' already exists`)

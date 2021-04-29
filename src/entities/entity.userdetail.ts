@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ValidationEntity } from "./entity.validate";
 
 
@@ -6,9 +6,6 @@ import { ValidationEntity } from "./entity.validate";
 export class UserDetail extends ValidationEntity {
     @PrimaryGeneratedColumn('increment')
     uId!: number
-
-    @Column({nullable: false})
-    authType!: number
 
     @Column({nullable: false})
     profileName!: string
@@ -20,7 +17,7 @@ export class UserDetail extends ValidationEntity {
     school!: string
 
     @Column()
-    nation!: string
+    nationality!: string
 
     @Column({nullable: false})
     @CreateDateColumn()

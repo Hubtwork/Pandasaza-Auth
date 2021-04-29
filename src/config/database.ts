@@ -13,7 +13,7 @@ class Database {
     public static logger: any = new Logger()
 
     public static async getConnection(callback = null, wait = false) {
-        this.handleConnectionError()
+        Database.handleConnectionError()
         return await Database.createConnection()
     }
 
@@ -23,20 +23,20 @@ class Database {
 
     private static async createConnection() {
         const connectionOption = await getConnectionOptions(process.env.NODE_ENV)
-        this.logger.info(JSON.stringify(connectionOption))
         return await createConnection({...connectionOption, name: 'default'})
         .then(() => {
-          this.isConnected = true;
-          this.logger.info('database connected successfully')
+            Database.isConnected = true;
+            Database.logger.info('database connected successfully')
         }).catch((err: Error) => {
-          this.logger.error('database connection error...retrying')
-          this.emitter.emit('DB_CONNECT_ERROR')
+            console.log(err)
+            Database.logger.error('database connection error...retrying')
+            Database.emitter.emit('DB_CONNECT_ERROR')
         })
     }
 
     private static async handleConnectionError() {
-        this.emitter.on('DB_CONNECT_ERROR', async () => {
-            this.logger.log('info', 'database connection error...retrying')
+        Database.emitter.on('DB_CONNECT_ERROR', async () => {
+            Database.logger.error('database connection error...retrying')
             setTimeout(async () => {
                 await this.createConnection()
                 }, 3000)

@@ -4,7 +4,7 @@ import { db } from './src/utils/environments'
 const dbConnectionOptions: ConnectionOptions[] = [
     {
         name: "production",
-        type: "mysql",
+        type: "mariadb",
         database: db.database,
         synchronize: false,
         logging: true,
@@ -24,7 +24,7 @@ const dbConnectionOptions: ConnectionOptions[] = [
         },
     {
         name: "test",
-        type: "mysql",
+        type: "mariadb",
         database: 'auth_test',
         synchronize: true,
         dropSchema: true,
