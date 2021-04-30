@@ -1,5 +1,4 @@
 import { EntityRepository, Repository } from "typeorm"
-import { User } from "../entities/entity.user"
 import { UserProfile } from "../entities/entity.user.profile"
 import { Logger } from "../utils/logger"
 
@@ -8,7 +7,7 @@ import { Logger } from "../utils/logger"
 export class UserProfileRepository extends Repository<UserProfile> {
     private logger = new Logger()
     
-    public async insertUserDetail(
+    public async insertUserProfile(
         profileName: string,
         profileImage: string
         ): Promise<UserProfile | null> {
@@ -24,7 +23,6 @@ export class UserProfileRepository extends Repository<UserProfile> {
     public async getUserProfile(profileId: number): Promise<UserProfile | null> {
         try {
             const userProfile = await this.findOneOrFail({profileId: profileId})
-            this.logger.info(`[DB] UserDetail with \'${profileId}\' successfuly searched`)
             return userProfile
         } catch(error) {
             this.logger.error(`[DB] UserProfile with \'${profileId}\' not Found`)
@@ -39,7 +37,6 @@ export class UserProfileRepository extends Repository<UserProfile> {
             if (userProfile) {
                 userProfile.profileName = profileName
                 userProfile.profileImage = profileImage
-                this.logger.info(`[DB] UserDetail with \'${profileId}\' successfuly searched`)
                 return this.save(userProfile)
             }
             return null
@@ -53,8 +50,7 @@ export class UserProfileRepository extends Repository<UserProfile> {
         try {
             const userProfile = await this.findOneOrFail({profileId: profileId})
             if (userProfile) {
-                this.delete(profileId)
-                this.logger.info(`[DB] UserProfile with \'${profileId}\' successfuly deleted`)
+                await this.delete(profileId)
             }
             return profileId
         } catch(error) {

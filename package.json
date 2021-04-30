@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "ts-node ./src/server.ts",
-    "test": "jest",
+    "test": "jest --maxWorkers 1",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "migrate": "npm run typeorm migration:create -- -c production -n NewMigration"
   },
@@ -57,6 +57,9 @@
       "ts-jest": {
         "diagnostics": true
       }
-    }
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/__test__/setup.ts"
+    ]
   }
 }

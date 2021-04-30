@@ -18,11 +18,9 @@ export class User extends ValidationEntity {
     @Column()
     nationality!: string
 
-    @Column({nullable: false})
-    @CreateDateColumn()
+    @CreateDateColumn({nullable: false})
     registeredAt!: Date
 
-    @Column()
-    @UpdateDateColumn()
-    public updatedAt!: Date
+    @UpdateDateColumn({nullable: false})
+    updatedAt!: Date
 }

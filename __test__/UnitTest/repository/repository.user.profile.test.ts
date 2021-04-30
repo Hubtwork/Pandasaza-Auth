@@ -1,22 +1,21 @@
 import { getCustomRepository } from 'typeorm'
-import { UserProfile } from '../../../src/entities/entity.user.profile'
-import { UserProfileRepository } from '../../../src/repository/repository.profile'
-import { Logger } from '../../../src/utils/logger'
+import { UserProfileRepository } from '../../../src/repository/repository.user.profile'
 
 import '../database.setup'
 
-const logger = new Logger()
-
+// all covered
 describe('UserProfile DB TestSuite', () => {
     
     let repository: UserProfileRepository
 
-    beforeAll(() => { repository = getCustomRepository(UserProfileRepository) })
+    beforeAll( async () => { 
+        repository = getCustomRepository(UserProfileRepository) 
+    })
 
     it('신규 유저 프로필 생성', async () => {
-        await repository.insertUserDetail('master', 'https://imgur.com/d5G3whb')
-        await repository.insertUserDetail('slave', 'https://imgur.com/ntIdiPn')
-        await repository.insertUserDetail('master', 'https://imgur.com/k7smud6')
+        await repository.insertUserProfile('master', 'https://imgur.com/d5G3whb')
+        await repository.insertUserProfile('slave', 'https://imgur.com/ntIdiPn')
+        await repository.insertUserProfile('master', 'https://imgur.com/k7smud6')
         const userDetail = await repository.find({ profileName: 'master' })
         const allProfileCount = await repository.count()
         expect(allProfileCount).toEqual(3)

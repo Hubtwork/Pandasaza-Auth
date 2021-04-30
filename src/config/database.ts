@@ -15,14 +15,15 @@ class Database {
     }
 
     public static async closeConnection() {
-        await getConnection().close()
+        await getConnection().close().then(() => { Database.isConnected = false })
     }
 
-    private static async createConnection() {
+    public static async createConnection() {
         const connectionOption = await getConnectionOptions(process.env.NODE_ENV)
+        console.log(JSON.stringify(connectionOption))
         return await createConnection({...connectionOption, name: 'default'})
         .then(() => {
-            Database.isConnected = true;
+            Database.isConnected = true
             Database.logger.info('database connected successfully')
         }).catch((err: Error) => {
             console.log(err)
@@ -35,7 +36,7 @@ class Database {
         Database.emitter.on('DB_CONNECT_ERROR', async () => {
             Database.logger.error('database connection error...retrying')
             setTimeout(async () => {
-                await this.createConnection()
+                await Database.createConnection()
                 }, 3000)
         })
     }

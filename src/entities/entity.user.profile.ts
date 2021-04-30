@@ -1,5 +1,6 @@
 import { Length } from "class-validator"
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from "typeorm"
+import { User } from "./entity.user"
 import { ValidationEntity } from "./entity.validate"
 
 
@@ -16,7 +17,9 @@ export class UserProfile extends ValidationEntity {
     @Column({ type: 'text'})
     profileImage!: string
 
-    @Column()
-    @UpdateDateColumn()
-    public updatedAt!: Date
+    @CreateDateColumn({nullable: false})
+    registeredAt!: Date
+
+    @UpdateDateColumn({nullable: false})
+    updatedAt!: Date
 }
