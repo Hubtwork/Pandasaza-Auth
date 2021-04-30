@@ -1,3 +1,4 @@
+import { Length } from "class-validator"
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
 import { ValidationEntity } from "./entity.validate"
 
@@ -7,10 +8,12 @@ export class UserProfile extends ValidationEntity {
     @PrimaryGeneratedColumn('increment')
     profileId!: number
 
-    @Column({nullable: false})
+    // Constraint : 4 ~ 12 character
+    @Column({ type: "varchar", length: 12, nullable: false})
+    @Length(4, 12)
     profileName!: string
 
-    @Column()
+    @Column({ type: 'text'})
     profileImage!: string
 
     @Column()

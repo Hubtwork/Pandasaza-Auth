@@ -25,7 +25,7 @@ const dbConnectionOptions: ConnectionOptions[] = [
     {
         name: "test",
         type: "mariadb",
-        database: 'auth_test',
+        database: 'test_auth',
         synchronize: true,
         dropSchema: true,
         logging: false,
