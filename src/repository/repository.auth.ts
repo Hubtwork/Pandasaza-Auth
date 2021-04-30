@@ -1,13 +1,13 @@
 import { EntityRepository, Repository } from 'typeorm'
 import { AuthPhone } from '../entities/entity.auth.phone'
-import { UserDetail } from '../entities/entity.userdetail'
+import { User } from '../entities/entity.user'
 import { Logger } from '../utils/logger'
 
 @EntityRepository(AuthPhone)
 export class AuthPhoneRepository extends Repository<AuthPhone> {
     private logger = new Logger()
     
-    public async insertAuthPhone(phone: string, userDetail: UserDetail): Promise<AuthPhone | null> {
+    public async insertAuthPhone(phone: string, userDetail: User): Promise<AuthPhone | null> {
         try {
             const authPhone = this.create({ userDetail, phone })
             return this.save(authPhone)

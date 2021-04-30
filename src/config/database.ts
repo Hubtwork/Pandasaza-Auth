@@ -1,9 +1,6 @@
 
 import EventEmitter = require('events')
 import { createConnection, getConnectionOptions, getConnection } from 'typeorm';
-import { AuthPhone } from '../entities/entity.auth.phone';
-import { UserDetail } from '../entities/entity.userdetail';
-import { db } from '../utils/environments'
 import { Logger } from '../utils/logger';
 
 class Database {

@@ -4,7 +4,7 @@ import { UserDetailRepository } from '../../../src/repository/repository.user.de
 
 import '../database.setup'
 import { Logger } from '../../../src/utils/logger'
-import { UserDetail } from '../../../src/entities/entity.userdetail'
+import { User } from '../../../src/entities/entity.user'
 
 let logger = new Logger()
 

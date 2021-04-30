@@ -11,6 +11,7 @@
   "author": "hubtwork <hubtwork@gmail.com> (http://github.com/Hubtwork)",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^3.0.1",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.23",
