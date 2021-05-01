@@ -1,11 +1,12 @@
 import { Database } from '../../src/config/database'
+import { Logger } from '../../src/utils/logger'
 
-jest.setTimeout(3 * 60 * 1000)
+const logger = new Logger()
 
 beforeAll( async (done) => {
     if (Database.isConnected = true) {
         await Database.getConnection().then(() => {
-            console.log('DB ON')
+            logger.info('DB ON')
             done()
         })
     }
@@ -14,7 +15,7 @@ beforeAll( async (done) => {
 afterAll( async (done) => {
     if (Database.isConnected = true) {
         await Database.closeConnection().then(() => {
-            console.log('DB OFF')
+            logger.info('DB OFF')
             done()
         })
     }

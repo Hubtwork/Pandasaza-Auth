@@ -32,7 +32,6 @@ describe('UserDetail DB TestSuite', () => {
     it('UserDetail 데이터 조회 ( 정상 )', async () => {
         const user = await repository.getUserDetail(1)
         const users = await repository.find()
-        console.log(JSON.stringify(users))
         expect(user !== null).toEqual(true)
         // check Profiles
         expect(user!.profile.profileId).toEqual(1)

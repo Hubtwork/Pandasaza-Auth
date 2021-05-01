@@ -4,14 +4,14 @@ import { Length } from 'class-validator'
 import { User } from "./entity.user"
 import bcrypt from 'bcrypt'
 
-@Entity({name: 'auth_phone'}) 
-export class AuthPhone extends ValidationEntity {
+@Entity({name: 'account'}) 
+export class Account extends ValidationEntity {
     @PrimaryGeneratedColumn('uuid')
     pId!: string
 
     @OneToOne(() => User)
-    @JoinColumn()
-    userDetail!: User
+    @JoinColumn({name: 'user'})
+    user!: User
 
     @Column()
     @Length(10, 11)

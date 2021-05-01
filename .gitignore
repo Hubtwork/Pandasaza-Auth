@@ -166,5 +166,6 @@ Temporary Items
 *.code-workspace
 
 # jwt secrets, etc.
+sample.ts
 
 # End of https://www.toptal.com/developers/gitignore/api/osx,node,vscode

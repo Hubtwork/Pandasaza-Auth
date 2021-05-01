@@ -9,7 +9,7 @@ export class User extends ValidationEntity {
     uId!: number
 
     @OneToOne(() => UserProfile)
-    @JoinColumn()
+    @JoinColumn({name: 'profile'})
     profile!: UserProfile
 
     @Column({nullable: false})

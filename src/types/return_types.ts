@@ -10,3 +10,9 @@ export type DbRequest<T> = {
   data?: [T]
   error?: {}
 }
+
+export type SMSResult = {
+  isSuccess: boolean
+  validationCode?: string
+  errorMessage?: {}
+}

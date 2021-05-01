@@ -1,3 +1,4 @@
+require('dotenv').config()
 
 export const server = {
   port: process.env.SERVER_PORT,
@@ -11,11 +12,6 @@ export const ncp_auth = {
 export const sens = {
   phone: process.env.SENS_PHONE,
   clientId: process.env.SENS_CLIENT_ID
-}
-
-export const kakao_auth = {
-  key: process.env.KAKAO_KEY,
-  redirectPath: process.env.KAKAO_REDIRECT_PATH
 }
 
 export const db = {

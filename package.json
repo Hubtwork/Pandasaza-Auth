@@ -34,6 +34,7 @@
     "express-winston": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "ncp-client": "^1.1.2-a",
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^26.5.5",
     "typeorm": "^0.2.32",
