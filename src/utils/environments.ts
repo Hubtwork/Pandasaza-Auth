@@ -21,3 +21,10 @@ export const db = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD
 }
+
+export const jwt = {
+  access_key: process.env.ACCESS_TOKEN_SECRET,
+  access_life: process.env.ACCESS_TOKEN_LIFE,
+  refresh_key: process.env.REFRESH_TOKEN_SECRET,
+  refresh_life: process.env.REFRESH_TOKEN_LIFE
+}

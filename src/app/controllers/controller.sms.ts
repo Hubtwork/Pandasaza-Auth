@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
+import { getConnection } from "typeorm";
 import Controller from "../interfaces/controller";
+import { AccountRepository } from "../repository/repository.account";
 import { SmsService } from "../services/service.sms";
 import { SMSResult } from "../types/return_types";
 import { Logger } from "../utils/logger";
@@ -16,10 +18,12 @@ class SmsController implements Controller {
     constructor() {
         this.service = new SmsService()
         this.logger = new Logger()
+        this.constructRouters()
     }
 
     private constructRouters() {
         this.router.get(`${this.path}/validate/:phone`, this.launchSMSAuthentification)
+        this.router.get(`${this.path}/scan/:phone`, this.checkSMSAuthentification)
     }
 
     private launchSMSAuthentification = async (request: Request, response: Response) => {
@@ -35,6 +39,8 @@ class SmsController implements Controller {
 
     private checkSMSAuthentification = async (request: Request, response: Response) => {
         const validatedPhoneNumber = request.params.phone
-        
+        const searchedAccount = await this.service.scanAccount(validatedPhoneNumber)
+        if (searchedAccount) { response.redirect('/auth/signIn/:phone') }
+        else { response.redirect('/auth/register/:phone') }
     }
 }

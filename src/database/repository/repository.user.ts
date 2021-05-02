@@ -1,7 +1,7 @@
-import { EntityRepository, getConnection, getCustomRepository, Repository } from "typeorm"
+import { EntityRepository, getCustomRepository, Repository } from "typeorm"
 import { User } from "../entities/entity.user"
 import { UserProfile } from "../entities/entity.user.profile"
-import { Logger } from "../utils/logger"
+import { Logger } from '../../utils/logger'
 import { UserProfileRepository } from "./repository.user.profile"
 
 

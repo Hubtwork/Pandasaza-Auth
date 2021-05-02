@@ -1,7 +1,4 @@
-import { SmsService } from '../../../src/services/service.sms'
-import { SMSResult } from '../../../src/types/return_types'
-
-
+import { SmsService } from "../../../app/services/service.sms"
 
 describe('SmsService TestSuite', () => {
     

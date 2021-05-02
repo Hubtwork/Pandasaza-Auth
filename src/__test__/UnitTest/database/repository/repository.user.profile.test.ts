@@ -1,5 +1,5 @@
 import { getCustomRepository } from 'typeorm'
-import { UserProfileRepository } from '../../../src/repository/repository.user.profile'
+import { UserProfileRepository } from '../../../../database/repository/repository.user.profile'
 
 import '../database.setup'
 

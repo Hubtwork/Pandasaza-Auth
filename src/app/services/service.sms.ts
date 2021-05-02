@@ -1,7 +1,10 @@
 import { SENS, SMS } from 'ncp-client'
-import { NCPAuthKeyType, SMSserviceAuthType } from '../types/auth.types'
-import { SMSResult } from '../types/return_types'
-import { ncp_auth, sens } from '../utils/environments'
+import { getConnection, getCustomRepository } from 'typeorm'
+import { Account } from '../../database/entities/entity.account'
+import { AccountRepository } from '../../database/repository/repository.account'
+import { NCPAuthKeyType, SMSserviceAuthType } from '../../types/auth.types'
+import { SMSResult } from '../../types/return_types'
+import { ncp_auth, sens } from '../../utils/environments'
 
 
 export class SmsService {
@@ -55,5 +58,13 @@ export class SmsService {
             }
         }
         return response
+    }
+
+    public async scanAccount(validatedPhoneNumber: string): Promise<Account | null> {
+        const accountRepository = getCustomRepository(AccountRepository)
+        const account = await accountRepository.findAccount(validatedPhoneNumber)
+        // means no account with phoneNumber
+        if (!account) return null
+        return account
     }
 }
