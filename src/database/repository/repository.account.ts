@@ -1,7 +1,7 @@
 import { EntityRepository, getCustomRepository, Repository } from 'typeorm'
 import { Account } from '../entities/entity.account'
 import { User } from '../entities/entity.user'
-import { Logger } from '../utils/logger'
+import { Logger } from '../../utils/logger'
 import { UserRepository } from './repository.user'
 
 @EntityRepository(Account)

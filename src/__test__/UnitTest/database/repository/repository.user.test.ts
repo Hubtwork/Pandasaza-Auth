@@ -1,7 +1,7 @@
-import { getCustomRepository } from 'typeorm'
-import { UserRepository } from '../../../src/repository/repository.user'
-import { UserProfileRepository } from '../../../src/repository/repository.user.profile'
 
+import { getCustomRepository } from 'typeorm'
+import { UserRepository } from '../../../../database/repository/repository.user'
+import { UserProfileRepository } from '../../../../database/repository/repository.user.profile'
 import '../database.setup'
 
 describe('UserDetail DB TestSuite', () => {

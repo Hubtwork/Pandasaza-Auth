@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from "typeorm"
 import { UserProfile } from "../entities/entity.user.profile"
-import { Logger } from "../utils/logger"
+import { Logger } from "../../utils/logger"
 
 
 @EntityRepository(UserProfile)

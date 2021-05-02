@@ -68,6 +68,6 @@
     "skipLibCheck": true,                           /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true        /* Disallow inconsistently-cased references to the same file. */
   },
-  "include": ["./src/**/*", "./config/**/*", "bin/www.ts", "ormconfig.ts", "UnitTest"],
-  "exclude": ["./__test__"]
+  "include": ["./src/**/*", "./config/**/*", "bin/www.ts", "ormconfig.ts", "./src/__test__"],
+  "exclude": [""]
 }
