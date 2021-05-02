@@ -1,6 +1,9 @@
 import Token from "../../interfaces/interface.token";
 import { jwt } from "../../utils/environments";
 import * as JWT from 'jsonwebtoken'
+import AuthentificationFailedException from "../exceptions/network/AuthentificationFailed";
+import TokenizedData from "../../interfaces/interface.token.data";
+import HttpException from "../exceptions/HttpException";
 
 
 export default class TokenService {
@@ -23,7 +26,7 @@ export default class TokenService {
     }
 
     public createRefreshToken(accountId: string, userId: number, profileId: number): Token {
-        const payload = { 
+        const payload: TokenizedData = { 
             accountId: accountId,
             userId: userId,
             profileId: profileId
@@ -37,6 +40,24 @@ export default class TokenService {
             expiresIn: Number(jwt.refresh_life)
         }
         return token
+    }
+
+    public verifyAccessToken(token: string): Promise<TokenizedData> {
+        return new Promise( (resolve, reject) => {
+            JWT.verify(token, String(jwt.access_key), (error, payload) => {
+                if(error) reject(new AuthentificationFailedException())
+                resolve(payload as TokenizedData)
+            })
+        })
+    }
+
+    public verifyRefreshToken(token: string): Promise<TokenizedData> {
+        return new Promise( (resolve, reject) => {
+            JWT.verify(token, String(jwt.refresh_key), (error, payload) => {
+                if(error) reject(new AuthentificationFailedException())
+                resolve(payload as TokenizedData)
+            })
+        })
     }
 
 }

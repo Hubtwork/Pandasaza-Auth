@@ -4,11 +4,11 @@ import cookieParser from 'cookie-parser'
 
 import Controller from './interfaces/controller'
 import { normalizePort } from './utils/helpers'
-import errorMiddleware from './middlewares/error.middlewares'
 
 import { server } from './utils/environments'
 import { Logger } from './utils/logger';
 import { Database } from './config/database';
+import errorMiddleware from './app/middlewares/error.middlewares';
 
 class App {
   
