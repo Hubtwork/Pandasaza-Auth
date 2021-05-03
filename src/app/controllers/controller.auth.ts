@@ -1,7 +1,7 @@
 import { Router } from "express"
-import Controller from "../interfaces/controller"
+import Controller from "../../interfaces/controller"
 import { AuthentificationService } from "../services/service.auth"
-import { Logger } from "../utils/logger"
+import { Logger } from "../../utils/logger"
 
 
 
@@ -17,6 +17,16 @@ class AuthController implements Controller {
         this.service = new AuthentificationService()
     }
 
-    
+    private constructRouters() {
+
+    }
+
+    private signIn = async (request: Request, response: Response) => {
+        
+    }
+
+    private signOut = async (request: Request, response: Response) => {
+         
+    }
 
 }

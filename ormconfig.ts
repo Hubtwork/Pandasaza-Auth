@@ -23,6 +23,21 @@ const dbConnectionOptions: ConnectionOptions[] = [
         password: db.password
         },
     {
+        name: "development",
+        type: "mariadb",
+        database: 'dev_auth',
+        synchronize: true,
+        dropSchema: true,
+        logging: false,
+        entities: ["src/database/entities/**/*.ts"],
+        subscribers: ["src/database/migrations/**/*.ts"],
+        migrations: ["src/database/migrations/**/*.ts"],
+        host: db.host,
+        port: Number(db.port),
+        username: db.user,
+        password: db.password
+    },
+    {
         name: "test",
         type: "mariadb",
         database: 'test_auth',

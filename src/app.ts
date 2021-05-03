@@ -9,6 +9,7 @@ import { server } from './utils/environments'
 import { Logger } from './utils/logger';
 import { Database } from './config/database';
 import errorMiddleware from './app/middlewares/error.middlewares';
+import { profile } from 'winston';
 
 class App {
   
@@ -25,9 +26,11 @@ class App {
 
   public listen() {
     const port: number = normalizePort(server.port)
+    if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development'
     Database.getConnection().then(() => {
       this.app.listen(port, () => {
         this.logger.info(`App starts Listening on Port ${port}`)
+        this.logger.info(`App is running on ${process.env.NODE_ENV}`)
       })
     })
   }

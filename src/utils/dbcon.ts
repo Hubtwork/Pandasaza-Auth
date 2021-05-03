@@ -1,5 +1,5 @@
 import maria, { Query } from 'mysql'
-import DbException from '../exceptions/DbException'
+import DbException from '../app/exceptions/DbException'
 import { DbRequest } from '../types/return_types'
 import { db } from './environments'
 import { createConnection } from 'typeorm'

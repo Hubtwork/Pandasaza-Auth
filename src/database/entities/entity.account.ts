@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGenerate
 import { ValidationEntity } from "./entity.validate"
 import { Length } from 'class-validator'
 import { User } from "./entity.user"
-import bcrypt from 'bcrypt'
 
 @Entity({name: 'account'}) 
 export class Account extends ValidationEntity {
@@ -19,8 +18,4 @@ export class Account extends ValidationEntity {
 
     @CreateDateColumn({nullable: false})
     registeredAt!: Date
-
-    public hashPhoneNumberIdentity() { this.phone = bcrypt.hashSync(this.phone, 10) }
-
-    public checkIfUnencryptedPhoneIsValid(unencryptedPhone: string) { return bcrypt.compareSync(unencryptedPhone, this.phone) }
 }
