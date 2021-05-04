@@ -45,33 +45,27 @@ export class AuthentificationService {
             const account = await accountRepository.insertAccount(phoneNumber, user!)
             if (!account) reject(new DbException('Exception Occurred during Creating Account'))
             // if account successfully created, create token and return tokens
-            const tokens = await this.tokenService.createTokens(account!.accountId, user!.uId, profile!.profileId)
-            resolve(tokens)
+            const tokens = await this.tokenService.createTokens(phoneNumber)
+            if (!tokens) reject(new NoValidAccountException())
+            resolve(tokens!)
         })
     }
 
     public async signIn(validatedPhoneNumber: string): Promise<TokenTuple> {
-        const accountRepository = getCustomRepository(AccountRepository)
 
         return new Promise<TokenTuple>(async (resolve, reject) => {
-            const account = await accountRepository.findAccount(validatedPhoneNumber)
-            // error handling ( no account with the given phone number )
-            if (!account) reject(new NoValidAccountException())
-            const accountId = account!.accountId
-            const userId = account!.user.uId
-            const profileId = account!.user.profile.profileId
-            const tokens = await this.tokenService.createTokens(accountId, userId, profileId)
-            resolve(tokens)
+            const tokens = await this.tokenService.createTokens(validatedPhoneNumber)
+            if (!tokens) reject(new NoValidAccountException())
+            resolve(tokens!)
         })
     }
 
-    public async singOut(phoneNumber: string) {
-        
-        return new Promise(async (resolve, reject) => {
-
-            
+    public async singOut(phoneNumber: string): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+            const delResult = await this.tokenService.deleteRefreshToken(phoneNumber)
+            if(!delResult) reject(new DbException('Exception Occurred during Deleting RefreshToken'))
+            resolve(true)
         })
     }
-
 
 }

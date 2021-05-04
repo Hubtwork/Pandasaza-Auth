@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
 import { ValidationEntity } from "./entity.validate"
 import bcrypt from 'bcrypt'
+import { Account } from "./entity.account"
 
 @Entity({name: 'refresh_token'}) 
 export class RefreshToken extends ValidationEntity {
@@ -9,16 +10,20 @@ export class RefreshToken extends ValidationEntity {
     tokenId!: string
 
     @Column({nullable: false})
-    accountId!: string
+    phone!: string
 
     @Column({nullable: false})
     token!: string
+
+    @OneToOne(() => Account)
+    @JoinColumn({name: 'account'})
+    account!: Account
 
     @CreateDateColumn({nullable: false})
     issuedAt!: Date
 
     public hashingToken() { this.token = bcrypt.hashSync(this.token, 8) }
 
-    public checkIfUnencryptedPhoneIsValid(unencryptedPhone: string) { return bcrypt.compareSync(unencryptedPhone, this.token) }
+    public checkIfUnencryptedTokenIsValid(unencryptedToken: string) { return bcrypt.compareSync(unencryptedToken, this.token) }
 
 }

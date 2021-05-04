@@ -3,7 +3,7 @@ import { getCustomRepository } from 'typeorm'
 import { AccountRepository } from '../../../../database/repository/repository.account'
 import { UserRepository } from '../../../../database/repository/repository.user'
 import { UserProfileRepository } from '../../../../database/repository/repository.user.profile'
-import '../database.setup'
+import '../../../database.setup'
 
 describe('Account DB TestSuite', () => {
 

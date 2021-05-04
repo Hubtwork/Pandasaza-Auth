@@ -1,5 +1,5 @@
-import { Database } from "../../../config/database"
-import { Logger } from "../../../utils/logger"
+import { Database } from "../config/database"
+import { Logger } from "../utils/logger"
 
 const logger = new Logger()
 
