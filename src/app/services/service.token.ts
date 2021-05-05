@@ -8,21 +8,16 @@ import TokenTuple from "../../interfaces/interface.token.tuple";
 import { AccountRepository } from "../../database/repository/repository.account";
 import { Logger } from "../../utils/logger";
 import { Account } from "../../database/entities/entity.account";
-import InternalServerException from "../exceptions/network/InternalServerException";
 import VerifiedAccessTokenData from "../../interfaces/interface.token.payload";
 import AccessTokenExpiredException from "../exceptions/jwt/AccessTokenExpiredException";
 import RefreshTokenExpiredException from "../exceptions/jwt/RefreshTokenExpiredException";
 import InvalidSignatureException from "../exceptions/jwt/InvalidSignatureException";
+import DbException from "../exceptions/DbException";
 
 
 export default class TokenService {
 
     private logger: Logger = new Logger()
-    private repository: RefreshTokenRepository
-
-    constructor() {
-        this.repository = getCustomRepository(RefreshTokenRepository)
-    }
 
     public async createTokens(phone: string): Promise<TokenTuple | null> {
         const accountRepository = getCustomRepository(AccountRepository)
@@ -31,6 +26,7 @@ export default class TokenService {
         if (!(account.user)) return null
         if (!(account.user.profile)) return null
         const payload: TokenizedData = {
+            phone: account.phone,
             accountId: account.accountId,
             userId: account.user.uId,
             profileId: account.user.profile.profileId
@@ -47,10 +43,23 @@ export default class TokenService {
         return tokens
     }
 
+    public async renewTokens(refreshToken: string, phone: string): Promise<TokenTuple | null> {
+        const accountRepository = getCustomRepository(AccountRepository)
+        try {
+            await this.deleteRefreshToken(refreshToken)
+            const tokens = await this.createTokens(phone)
+            return tokens
+        } catch(error) {
+            this.logger.error(error)
+            return null
+        }
+    }
+
     // for signOut Method
     public async deleteRefreshToken(refreshToken: string): Promise<boolean> {
         try {
-            const delResult = await this.repository.deleteToken(refreshToken)
+            const tokenRepository = getCustomRepository(RefreshTokenRepository)
+            await tokenRepository.deleteToken(refreshToken)
             return true
         } catch(error) {
             return false
@@ -72,11 +81,17 @@ export default class TokenService {
 
     public async renewAccessToken(refreshToken: string): Promise<Token | null> {
         try {
-            const payload = await this.repository.getReferenceData(refreshToken)
-            if(!payload) return null
+            const tokenRepository = getCustomRepository(RefreshTokenRepository)
+            const payload = await tokenRepository.getReferenceData(refreshToken)
+            /*
+                Possible Exceptions
+                - Exception From DB ( reference Loading )
+            */
+            if(!payload) throw new DbException('DBerror','Something going wrong on DB')
             const accessToken = this.createAccessToken(payload)
             return accessToken
         } catch(error) {
+            this.logger.error(error.message)
             return null
         }
     }
@@ -102,7 +117,8 @@ export default class TokenService {
         }
         try {
             // save the token to db
-            const savedToken = await this.repository.registerToken(phone, account, refreshToken)
+            const tokenRepository = getCustomRepository(RefreshTokenRepository)
+            const savedToken = await tokenRepository.registerToken(phone, account, refreshToken)
             return token
         } catch(error) {
             return null
@@ -116,6 +132,7 @@ export default class TokenService {
                     if (error.name == 'TokenExpiredError') { reject(new AccessTokenExpiredException())}
                     else if (error.name == 'JsonWebTokenError') { reject(new InvalidSignatureException()) }
                     else if (error.name == 'NotBeforeError') { reject(error) }
+                    reject(error)
                 }
                 resolve(decoded as VerifiedAccessTokenData)
             })
@@ -129,6 +146,7 @@ export default class TokenService {
                     if (error.name == 'TokenExpiredError') { reject(new RefreshTokenExpiredException()) }
                     else if (error.name == 'JsonWebTokenError') { reject(new InvalidSignatureException()) }
                     else if (error.name == 'NotBeforeError') { reject(error) }
+                    reject(error)
                 }
                 resolve(true)
             })

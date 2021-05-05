@@ -13,10 +13,10 @@ import { UserProfileRepository } from "../../../database/repository/repository.u
 import { UserRepository } from "../../../database/repository/repository.user"
 import InternerServerException from "../../../app/exceptions/network/InternalServerException"
 import VerifiedTokenData from "../../../interfaces/interface.token.payload"
+import JWTException from "../../../app/exceptions/JWTException"
 
 describe('TokenService TestSuite', () => {
     
-    let logger = new Logger()
     let service: TokenService
 
     let payload: TokenizedData | null
@@ -56,7 +56,7 @@ describe('TokenService TestSuite', () => {
     })
 
     it('JWT Access Token 인증 ', async () => {
-        let exception: HttpException | null = null
+        let exception: JWTException | null = null
         let tokenizedData: VerifiedTokenData | null = null
         try {
             tokenizedData = await service.verifyAccessToken(accessToken!.token)
@@ -71,7 +71,7 @@ describe('TokenService TestSuite', () => {
     })
 
     it('JWT Refresh Token 인증 ', async () => {
-        let exception: HttpException | null = null
+        let exception: JWTException | null = null
         let isRefreshTokenValid: boolean = false
         try {
             isRefreshTokenValid = await service.verifyRefreshToken(refreshToken!.token)
@@ -85,7 +85,7 @@ describe('TokenService TestSuite', () => {
 
     it('JWT Token 인증 ( 잘못된 Secret Key )', async () => {
 
-        let exception: HttpException | null = null
+        let exception: JWTException | null = null
         let tokenizedData: VerifiedTokenData | null = null
         try {
             tokenizedData = await service.verifyAccessToken(refreshToken!.token)
@@ -94,13 +94,13 @@ describe('TokenService TestSuite', () => {
             exception = error
         }
         expect(exception !== null).toEqual(true)
-        expect(exception!.message === '[ JWT ] Tried to Verify with Invalid Signature').toEqual(true)
+        expect(exception!.name === 'InvalidSign').toEqual(true)
         expect(tokenizedData === null).toEqual(true)
     })
 
     it('JWT Token 만료 error check', async () => {
 
-        let exception: HttpException | null = null
+        let exception: JWTException | null = null
         let tokenizedData: VerifiedTokenData | null = null
         const token = JWT.sign({}, String(jwt.access_key), {
             algorithm: 'HS256',
@@ -113,12 +113,12 @@ describe('TokenService TestSuite', () => {
             exception = error
         }
         expect(exception !== null).toEqual(true)
-        expect(exception!.message === '[ JWT ] Access Token Expired').toEqual(true)
+        expect(exception!.name === 'AccessTokenExpired').toEqual(true)
         expect(tokenizedData === null).toEqual(true)
     })
 
     it('JWT AccessToken 갱신 ', async () => {
-        let exception: HttpException | null = null
+        let exception: JWTException | null = null
         let verifiedAccessToken: TokenizedData | null = null
 
         const expiredAccessToken = JWT.sign(payload!, String(jwt.access_key), {

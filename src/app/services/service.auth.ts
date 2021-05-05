@@ -8,13 +8,14 @@ import { reject } from "lodash";
 import NoValidAccountException from "../exceptions/network/NoValidAccountException";
 import TokenTuple from "../../interfaces/interface.token.tuple";
 import DbException from "../exceptions/DbException";
+import RefreshTokenExpiredException from "../exceptions/jwt/RefreshTokenExpiredException";
+import UserDTO from "../../interfaces/interface.DTO.user";
 
 
 
 
 export class AuthentificationService {
 
-    private createCookie = (token: Token) => { return `Authorization=${token.token}; HttpOnly; Max-Age=${token.expiresIn}` }
 
     private tokenService: TokenService
 
@@ -22,28 +23,25 @@ export class AuthentificationService {
         this.tokenService = new TokenService()
     }
 
-
     public async register(
-        phoneNumber: string,
-        profileName: string,
-        profileImg: string,
-        school: string,
-        nationality: string
+        userDTO: UserDTO
     ): Promise<TokenTuple> {
         const accountRepository = getCustomRepository(AccountRepository)
         const userProfileRepository = getCustomRepository(UserProfileRepository)
         const userRepository = getCustomRepository(UserRepository)
 
+        const { phoneNumber, profileName, profileImg, school, nationality } = userDTO
+
         return new Promise<TokenTuple>( async (resolve, reject) => {
             // construct Profile
             const profile = await userProfileRepository.insertUserProfile(profileName, profileImg)
-            if (!profile) reject(new DbException('Exception Occurred during Creating Profile'))
+            if (!profile) reject(new DbException('DBerror', 'Exception Occurred during Creating Profile'))
             // construct User
             const user = await userRepository.insertUserDetail(profile!, school, nationality)
-            if (!user) reject(new DbException('Exception Occurred during Creating User'))
+            if (!user) reject(new DbException('DBerror', 'Exception Occurred during Creating User'))
             // construct Account
             const account = await accountRepository.insertAccount(phoneNumber, user!)
-            if (!account) reject(new DbException('Exception Occurred during Creating Account'))
+            if (!account) reject(new DbException('DBerror', 'Exception Occurred during Creating Account'))
             // if account successfully created, create token and return tokens
             const tokens = await this.tokenService.createTokens(phoneNumber)
             if (!tokens) reject(new NoValidAccountException())
@@ -61,11 +59,31 @@ export class AuthentificationService {
     }
 
     public async singOut(phoneNumber: string): Promise<boolean> {
-        return new Promise<boolean>(async (resolve, reject) => {
+        return new Promise<boolean>( async (resolve, reject) => {
             const delResult = await this.tokenService.deleteRefreshToken(phoneNumber)
-            if(!delResult) reject(new DbException('Exception Occurred during Deleting RefreshToken'))
+            if(!delResult) reject(new DbException('DBerror','Exception Occurred during Deleting RefreshToken'))
             resolve(true)
         })
+    }
+
+    /**
+     * 
+     * @param refreshToken must be already verified refreshToken
+     * @returns 
+     */
+    public async renewAccessToken(refreshToken: string) {
+        try {
+            // server-side check RefreshToken is valid
+            await this.tokenService.verifyRefreshToken(refreshToken)
+            // create new access token correspond to given refresh token
+            const newAccessToken = await this.tokenService.renewAccessToken(refreshToken)
+            return newAccessToken
+        } catch(error) {
+            // Refresh Token Expired  =>  have to regain RefreshToken
+            if (error.name === 'RefreshTokenExpired') {  }
+            else if (error.name === 'InvalidSign') {  }
+            return null
+        }
     }
 
 }

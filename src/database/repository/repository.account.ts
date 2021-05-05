@@ -28,11 +28,22 @@ export class AccountRepository extends Repository<Account> {
             const account = await this.findOneOrFail({where: {phone: phoneNumber}, relations:['user', 'user.profile']})
             if ( !account || !(account.user) || !(account.user.profile) ) throw new InternerServerException()
             return {
+                phone: phoneNumber,
                 accountId: account.accountId,
                 userId: account.user.uId,
                 profileId: account.user.profile.profileId
             }
         } catch(error) {
+            return null
+        }
+    }
+
+    public async getAccount(accountId: string): Promise<Account | null> {
+        try {
+            const account = await this.findOneOrFail({where: { accountId: accountId }, relations:['user', 'user.profile']})
+            return account
+        } catch(error) {
+            this.logger.error(`[DB] Account with \'${accountId}\' not Found`)
             return null
         }
     }

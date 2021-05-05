@@ -20,6 +20,7 @@ class Database {
 
     public static async createConnection() {
         const connectionOption = await getConnectionOptions(process.env.NODE_ENV)
+        console.log(connectionOption)
         return await createConnection({...connectionOption, name: 'default'})
         .then(() => {
             Database.isConnected = true

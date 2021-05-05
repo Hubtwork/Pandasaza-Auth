@@ -17,6 +17,7 @@
     "@types/jest": "^26.0.23",
     "@types/jsonwebtoken": "^8.5.1",
     "@types/lodash": "^4.14.168",
+    "@types/morgan": "^1.9.2",
     "@types/mysql": "^2.15.18",
     "@types/node": "^14.14.41",
     "jest": "^26.6.3",
@@ -27,6 +28,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
+    "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
@@ -34,6 +36,7 @@
     "express": "^4.17.1",
     "express-winston": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "ncp-client": "^1.1.2-a",
     "reflect-metadata": "^0.1.13",

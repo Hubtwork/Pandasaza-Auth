@@ -1,9 +1,10 @@
-import { EntityRepository, Repository } from "typeorm";
+import { EntityRepository, getCustomRepository, Repository } from "typeorm";
 import DBJoinException from "../../app/exceptions/database/DBJoinException";
 import TokenizedData from "../../interfaces/interface.token.data";
 import { Logger } from "../../utils/logger";
 import { Account } from "../entities/entity.account";
 import { RefreshToken } from "../entities/entity.token.refresh";
+import { AccountRepository } from "./repository.account";
 
 @EntityRepository(RefreshToken)
 export class RefreshTokenRepository extends Repository<RefreshToken> {
@@ -19,12 +20,24 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
         }
     }
 
+    public async createRefreshToken(phone: string, accountId: string, refreshToken: string): Promise<RefreshToken | null> {
+        try {
+            const account = await getCustomRepository(AccountRepository).getAccount(accountId)
+            const token = this.create({ phone: phone, account: account!, token: refreshToken})
+            return this.save(token)
+        } catch(error) {
+            this.logger.error(`[DB] create RefreshToken of Phone ${phone} failed`)
+            return null
+        }
+    }
+
     public async getReferenceData(token: string): Promise<TokenizedData | null> {
         try {
             const refreshToken = await this.findOneOrFail({ where: { token: token}, relations: ['account', 'account.user', 'account.user.profile']})
             const account = refreshToken.account
             if( account && account.user && account.user.profile ) {
                 const tokenizedData: TokenizedData = {
+                    phone: account.phone,
                     accountId: account.accountId,
                     userId: account.user.uId,
                     profileId: account.user.profile.profileId
