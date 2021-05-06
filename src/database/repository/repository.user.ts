@@ -4,11 +4,25 @@ import { UserProfile } from "../entities/entity.user.profile"
 import { Logger } from '../../utils/logger'
 import { UserProfileRepository } from "./repository.user.profile"
 
+import { validate } from 'class-validator'
+
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
     private logger = new Logger()
     
+    public async validate(school: string, nationality: string): Promise<boolean> {
+        try {
+            const user = new User()
+            user.nationality = nationality
+            user.school = school
+            if ( (await validate(user)).length > 0 ) throw new Error('User Validation Error')
+            return true
+        } catch(error) {
+            return false
+        }
+    }
+
     public async insertUserDetail(
         profile: UserProfile,
         school: string, 

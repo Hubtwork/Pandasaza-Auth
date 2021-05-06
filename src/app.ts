@@ -1,15 +1,16 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import * as bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 
+import { ValidationError} from 'class-validator'
+
 import Controller from './interfaces/controller'
 import { normalizePort } from './utils/helpers'
-
+import { ApiError, BadRequestError, InternalError } from './core/responses/response.Error'
 import { server } from './utils/environments'
 import { Logger } from './utils/logger';
 import { Database } from './config/database';
 import errorMiddleware from './app/middlewares/error.middlewares';
-import { profile } from 'winston';
 import NotFoundException from './app/exceptions/network/NotFoundException';
 
 import mainRouter from './app/routes/routes.index'
@@ -106,6 +107,24 @@ class APP {
       res.status(404).json({
         error: 'Not Found'
       })
+    })
+
+    this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+      if (err instanceof ApiError) {
+        ApiError.handle(err, res);
+      } else if (err instanceof Array) {
+        // it means validation errors
+        const message = err.map( (validationError: ValidationError) => validationError.constraints)
+        console.log(message)
+        return ApiError.handle(new BadRequestError('Invalid Parameters'), res)
+      }
+      else {
+        if (process.env.NODE_ENV === 'development') {
+          this.logger.error(err.message)
+          return res.status(500).send(err.message);
+        }
+        ApiError.handle(new InternalError(), res);
+      }
     })
   }
 

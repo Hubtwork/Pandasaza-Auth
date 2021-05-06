@@ -2,7 +2,7 @@
 
 
 export default interface UserDTO {
-    phoneNumber: string
+    phone: string
     profileName: string
     profileImg: string
     school: string

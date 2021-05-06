@@ -22,7 +22,7 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
 
     public async createRefreshToken(phone: string, accountId: string, refreshToken: string): Promise<RefreshToken | null> {
         try {
-            const account = await getCustomRepository(AccountRepository).getAccount(accountId)
+            const account = await getCustomRepository(AccountRepository).getAccountByAccountId(accountId)
             const token = this.create({ phone: phone, account: account!, token: refreshToken})
             return this.save(token)
         } catch(error) {

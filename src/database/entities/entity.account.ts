@@ -1,10 +1,10 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { ValidationEntity } from "./entity.validate"
 import { Length } from 'class-validator'
 import { User } from "./entity.user"
 
 @Entity({name: 'account'}) 
-export class Account extends ValidationEntity {
+export class Account extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     accountId!: string
 

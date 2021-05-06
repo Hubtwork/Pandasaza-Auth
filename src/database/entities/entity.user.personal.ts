@@ -1,5 +1,5 @@
 import { Max, Min } from "class-validator"
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, BaseEntity } from "typeorm"
 import { ValidationEntity } from "./entity.validate"
 
 
@@ -9,7 +9,7 @@ import { ValidationEntity } from "./entity.validate"
  *          TOPIC - Is it needs for infomatics like fields in ADs, PRODUCTs
  */
 @Entity({name: 'user_personal'}) 
-export class UserPersonal extends ValidationEntity {
+export class UserPersonal extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
     personalId!: number
 

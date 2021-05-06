@@ -1,19 +1,6 @@
 import { Response } from "express";
 import { AuthFailureResponse, AccessTokenErrorResponse, InternalErrorResponse, NotFoundResponse, BadRequestResponse, ForbiddenResponse } from "./response.API";
 
-class APIError extends Error {
-    public ErrorID: any;
-    public code: any;
-    constructor(message: string, ErrorID: number, code = null) {
-      super();
-      Error.captureStackTrace(this, this.constructor);
-      this.name = 'api error';
-      this.message = message;
-      if (ErrorID) this.ErrorID = ErrorID;
-      if (code) this.code = code;
-    }
-}
-
 enum ErrorType {
   BAD_TOKEN = 'BadTokenError',
   TOKEN_EXPIRED = 'TokenExpiredError',
@@ -27,7 +14,7 @@ enum ErrorType {
   FORBIDDEN = 'ForbiddenError',
 }
 
-abstract class ApiError extends Error {
+export abstract class ApiError extends Error {
   constructor(public type: ErrorType, public message: string = 'error') {
     super(type)
   }
@@ -59,7 +46,6 @@ abstract class ApiError extends Error {
     }
   }
 }
-
 
 export class AuthFailureError extends ApiError {
   constructor(message = 'Invalid Credentials') {
@@ -120,6 +106,3 @@ export class AccessTokenError extends ApiError {
     super(ErrorType.ACCESS_TOKEN, message);
   }
 }
-
-
-export default APIError

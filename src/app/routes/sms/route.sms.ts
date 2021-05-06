@@ -33,8 +33,11 @@ smsRouter.get('/authenticate/:phone',
         const phone = req.params.phone
         try {
             const searchedAccount = await service.scanAccount(phone)
-            if (searchedAccount) { res.redirect(`/auth/signIn/${phone}`) }
-            else { res.redirect(`/auth/register/${phone}`) }
+            if (searchedAccount) { res.redirect(`/sign/logIn/${phone}`) }
+            else { res.status(200).json({
+                phone: phone,
+                registered: 'false'
+            }) }
         } catch (error) {
             next(new InternalServerException())
         }

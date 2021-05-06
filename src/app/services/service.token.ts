@@ -21,7 +21,7 @@ export default class TokenService {
 
     public async createTokens(phone: string): Promise<TokenTuple | null> {
         const accountRepository = getCustomRepository(AccountRepository)
-        const account = await accountRepository.findAccount(phone)
+        const account = await accountRepository.getAccountByPhone(phone)
         if (!account) return null
         if (!(account.user)) return null
         if (!(account.user.profile)) return null

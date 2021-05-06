@@ -30,7 +30,7 @@ export class AuthentificationService {
         const userProfileRepository = getCustomRepository(UserProfileRepository)
         const userRepository = getCustomRepository(UserRepository)
 
-        const { phoneNumber, profileName, profileImg, school, nationality } = userDTO
+        const { phone, profileName, profileImg, school, nationality } = userDTO
 
         return new Promise<TokenTuple>( async (resolve, reject) => {
             // construct Profile
@@ -40,10 +40,10 @@ export class AuthentificationService {
             const user = await userRepository.insertUserDetail(profile!, school, nationality)
             if (!user) reject(new DbException('DBerror', 'Exception Occurred during Creating User'))
             // construct Account
-            const account = await accountRepository.insertAccount(phoneNumber, user!)
+            const account = await accountRepository.insertAccount(phone, user!)
             if (!account) reject(new DbException('DBerror', 'Exception Occurred during Creating Account'))
             // if account successfully created, create token and return tokens
-            const tokens = await this.tokenService.createTokens(phoneNumber)
+            const tokens = await this.tokenService.createTokens(phone)
             if (!tokens) reject(new NoValidAccountException())
             resolve(tokens!)
         })

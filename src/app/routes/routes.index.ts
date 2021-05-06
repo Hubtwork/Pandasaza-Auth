@@ -1,6 +1,6 @@
 import express from "express";
 import smsRouter from "./sms/route.sms";
-import authRouter from './auth/route.auth'
+import authRouter from './sign/route.sign'
 
 
 
@@ -11,7 +11,7 @@ const router = express.Router()
 
 
 router.use('/sms', smsRouter)
-router.use('/auth', authRouter)
+router.use('/sign', authRouter)
 
 
 export default router

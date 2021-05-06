@@ -48,7 +48,7 @@ export default class JWT {
 
     public static async renewAccessToken(expiredAccessToken: string, refreshToken: string): Promise<Tokens> {
         const expiredAccessTokenPayload = await this.decode(expiredAccessToken)
-        const account = await getCustomRepository(AccountRepository).getAccount(expiredAccessTokenPayload.accountId)
+        const account = await getCustomRepository(AccountRepository).getAccountByAccountId(expiredAccessTokenPayload.accountId)
         if (!expiredAccessTokenPayload) throw new BadTokenError()
         if (!account) throw new AuthFailureError()
 
