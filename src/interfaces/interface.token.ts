@@ -1,6 +1,6 @@
 interface Token {
     token: string
-    expiresIn: number
+    expiresIn: string
 }
   
 export default Token;

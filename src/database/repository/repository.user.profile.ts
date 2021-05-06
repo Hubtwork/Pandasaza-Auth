@@ -1,11 +1,24 @@
 import { EntityRepository, Repository } from "typeorm"
 import { UserProfile } from "../entities/entity.user.profile"
 import { Logger } from "../../utils/logger"
+import { validate } from "class-validator"
 
 
 @EntityRepository(UserProfile)
 export class UserProfileRepository extends Repository<UserProfile> {
     private logger = new Logger()
+
+    public async validate(profileName: string, profileImage: string): Promise<boolean> {
+        try {
+            const profile = new UserProfile()
+            profile.profileName = profileName
+            profile.profileImage = profileImage
+            if ( (await validate(profile)).length > 0 ) throw new Error('Profile Validation Error')
+            return true
+        } catch(error) {
+            return false
+        }
+    }
     
     public async insertUserProfile(
         profileName: string,

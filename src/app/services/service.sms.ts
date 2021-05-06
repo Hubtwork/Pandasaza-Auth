@@ -62,7 +62,7 @@ export class SmsService {
 
     public async scanAccount(validatedPhoneNumber: string): Promise<Account | null> {
         const accountRepository = getCustomRepository(AccountRepository)
-        const account = await accountRepository.findAccount(validatedPhoneNumber)
+        const account = await accountRepository.getAccountByPhone(validatedPhoneNumber)
         // means no account with phoneNumber
         if (!account) return null
         return account
