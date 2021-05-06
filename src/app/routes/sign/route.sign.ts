@@ -3,8 +3,9 @@ import { getCustomRepository } from "typeorm";
 import { UserPayload } from "../../../core/jwt/jwt.payload";
 import JWT from "../../../core/jwt/jwt.service";
 import { SuccessMsgResponse, SuccessResponse, TokenRefreshResponse } from "../../../core/responses/response.API";
-import { BadRequestError, InternalError } from "../../../core/responses/response.Error";
+import { BadRequestError, InternalError, NotFoundError } from "../../../core/responses/response.Error";
 import { AccountRepository } from "../../../database/repository/repository.account";
+import { RefreshTokenRepository } from "../../../database/repository/repository.token.refresh";
 import { UserRepository } from "../../../database/repository/repository.user";
 import { UserProfileRepository } from "../../../database/repository/repository.user.profile";
 import UserDTO from "../../../interfaces/interface.DTO.user";
@@ -20,23 +21,52 @@ import { getAccessToken, validateUserDTO } from "../../utils/validateUtils";
 
 const authRouter = express.Router()
 
-authRouter.get('/logIn/:phone',
+authRouter.get('/login/:phone',
     async function (req: Request, res: Response, next: NextFunction) {
-        const phone = req.params.phone
+        try {
+            const phone = req.params.phone
 
-        const account = await getCustomRepository(AccountRepository).getAccountByPhone(phone)
-        if ( !account ) throw new BadRequestError(`No Account with ${phone}`)
+            const account = await getCustomRepository(AccountRepository).getAccountByPhone(phone)
+            if ( !account ) throw new BadRequestError(`No Account with ${phone}`)
 
-        const payload: UserPayload = {
-            phone: phone,
-            accountId: account.accountId
+            const payload: UserPayload = {
+                phone: phone,
+                accountId: account.accountId
+            }
+            const tokens = await JWT.createTokens(payload)
+
+            res.status(200).json({
+                user: phone,
+                currectRoute: 'SignIN'
+            })
+        } catch (error) {
+            next(error)
         }
-        const tokens = await JWT.createTokens(payload)
+    }
+)
 
-        res.status(200).json({
-            user: phone,
-            currectRoute: 'SignIN'
-        })
+authRouter.post('/logout',
+    async function (req: Request, res: Response, next: NextFunction) {
+        try {
+            if (
+                Object.keys(req.body).length != 1 ||
+                !req.body ||
+                !req.body.phone
+            ) throw new BadRequestError('Invalid Request Body ')
+            next()
+        } catch(error) {
+            next(error)
+        }
+    },
+    async function (req: Request, res: Response, next: NextFunction) {
+        try {
+            
+            const delResult = await getCustomRepository(RefreshTokenRepository).deleteToken(req.body.phone)
+            if (!delResult) throw new InternalError('DB Error')
+            new SuccessMsgResponse(`${req.body.phone} logout Successfully`).send(res)
+        } catch(error) {
+            next(error)
+        }
     }
 )
 

@@ -1,5 +1,6 @@
 import { EntityRepository, getCustomRepository, Repository } from "typeorm";
 import DBJoinException from "../../app/exceptions/database/DBJoinException";
+import { NotFoundError } from "../../core/responses/response.Error";
 import TokenizedData from "../../interfaces/interface.token.data";
 import { Logger } from "../../utils/logger";
 import { Account } from "../entities/entity.account";
@@ -60,15 +61,14 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
         }
     }
 
-    public async deleteToken(refreshToken: string): Promise<boolean> {
+    public async deleteToken(phone: string): Promise<boolean> {
         try {
-            const token = await this.findOneOrFail({ where: {token: refreshToken}})
-            if (token) {
-                await this.delete(token.tokenId)
-            }
+            const token = await this.findOneOrFail({ where: {phone: phone}})
+            if (!token) throw new Error('token Not found')
+            await this.delete(token.tokenId)
             return true
         } catch(error) {
-            this.logger.error(`[DB] delete Token of User { \'${refreshToken}\' } failed`)
+            this.logger.error(`[DB] delete Token of User { \'${phone}\' } failed`)
             return false
         }
     }
