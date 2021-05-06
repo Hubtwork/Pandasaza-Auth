@@ -2,12 +2,13 @@ import express, { Request, Response, NextFunction } from "express";
 import { getCustomRepository } from "typeorm";
 import { UserPayload } from "../../../core/jwt/jwt.payload";
 import JWT from "../../../core/jwt/jwt.service";
+import { SuccessMsgResponse, SuccessResponse, TokenRefreshResponse } from "../../../core/responses/response.API";
 import { BadRequestError, InternalError } from "../../../core/responses/response.Error";
 import { AccountRepository } from "../../../database/repository/repository.account";
 import { UserRepository } from "../../../database/repository/repository.user";
 import { UserProfileRepository } from "../../../database/repository/repository.user.profile";
 import UserDTO from "../../../interfaces/interface.DTO.user";
-import { validateUserDTO } from "../../utils/validateUtils";
+import { getAccessToken, validateUserDTO } from "../../utils/validateUtils";
 
 
 /*
@@ -61,10 +62,29 @@ authRouter.post('/register',
             const newAccount = await getCustomRepository(AccountRepository).insertAccount(userDTO)
             if ( !newAccount ) throw new InternalError('DB Error')
 
-            res.status(200).json({
-                user: req.body,
-                currectRoute: 'Register'
-            })
+            const userPayload: UserPayload = {
+                phone: newAccount.phone,
+                accountId: newAccount.accountId
+            }
+            const loadedAccount = await getCustomRepository(AccountRepository).getAccountByAccountId(newAccount.accountId)
+            const tokens = await JWT.createTokens(userPayload)
+            new SuccessResponse('Registered Successfully', { account: loadedAccount, tokens: tokens }).send(res)
+        } catch(error) {
+            next(error)
+        }
+        
+    }
+)
+
+authRouter.post('/refresh', 
+    async function (req: Request, res: Response, next: NextFunction) {
+        try {
+            const accessToken = getAccessToken(req.headers.authorization)
+            if (!req.body || !req.body.refreshToken) throw new BadRequestError('RefreshToken Needed')
+            const refreshToken = req.body.refreshToken
+            const tokens = await JWT.renewAccessToken(accessToken, refreshToken)
+
+            new TokenRefreshResponse('Token Issued Successfully', tokens.accessToken, tokens.refreshToken).send(res)
         } catch(error) {
             next(error)
         }

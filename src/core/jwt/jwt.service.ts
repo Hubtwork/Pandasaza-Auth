@@ -47,18 +47,22 @@ export default class JWT {
     }
 
     public static async renewAccessToken(expiredAccessToken: string, refreshToken: string): Promise<Tokens> {
+        // original access token check
         const expiredAccessTokenPayload = await this.decode(expiredAccessToken)
-        const account = await getCustomRepository(AccountRepository).getAccountByAccountId(expiredAccessTokenPayload.accountId)
         if (!expiredAccessTokenPayload) throw new BadTokenError()
+
+        // is Token's payload valid ?
+        const account = await getCustomRepository(AccountRepository).getAccountByAccountId(expiredAccessTokenPayload.accountId)
         if (!account) throw new AuthFailureError()
 
+        // original refresh token check
         const refreshTokenPayload = await this.validate(refreshToken, String(jwt.refresh_key))
         if (!refreshTokenPayload) throw new BadTokenError()
 
         // if access / refresh token pair contaminated
         if (expiredAccessTokenPayload.accountId !== refreshTokenPayload.accountId) throw new AuthFailureError('Invalid Token Pair')
 
-        // request's refreshToken == server's refreshToken ?
+        // is given refreshToken already in DB ?
         const refreshTokenInDB = await getCustomRepository(RefreshTokenRepository).checkRefreshToken(refreshToken)
         if (!refreshTokenInDB) throw new AuthFailureError()
 
