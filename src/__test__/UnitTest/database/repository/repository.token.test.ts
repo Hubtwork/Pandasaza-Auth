@@ -4,6 +4,7 @@ import { AccountRepository } from "../../../../database/repository/repository.ac
 import { RefreshTokenRepository } from "../../../../database/repository/repository.token.refresh"
 import { UserRepository } from "../../../../database/repository/repository.user"
 import { UserProfileRepository } from "../../../../database/repository/repository.user.profile"
+import UserDTO from "../../../../interfaces/interface.DTO.user"
 
 import '../../../database.setup'
 
@@ -11,34 +12,38 @@ describe('UserDetail DB TestSuite', () => {
 
     let repository: RefreshTokenRepository
 
+    const user1: UserDTO = {
+        phone: '010xxxxyyyy',
+        profileName: 'master',
+        profileImg: 'https://imgur.com/d5G3whb',
+        school: 'Dongguk Univ',
+        nationality: 'ko'
+    }
+
+
     beforeAll( async () => {
         repository = getCustomRepository(RefreshTokenRepository)
         
-        const profileRepository = getCustomRepository(UserProfileRepository)
-        const userRepository = getCustomRepository(UserRepository)
         const accountRepository = getCustomRepository(AccountRepository)
-
-        const profile1 = await profileRepository.insertUserProfile('master', 'https://imgur.com/d5G3whb')
-        const user1 = await userRepository.insertUserDetail(profile1!, 'Dongguk Univ', 'ko')
-        await accountRepository.insertAccount('01075187260', user1!)
+        await accountRepository.insertAccount(user1)
     })
 
     it('RefreshToken 생성 ', async () => {
         const accountRepository = getCustomRepository(AccountRepository)
-        const account = await accountRepository.findAccount('01075187260')
+        const account = await accountRepository.getAccountByPhone('010xxxxyyyy')
 
-        const token = await repository.registerToken('01075187260', account!, 'refreshToken')
+        const token = await repository.registerToken('010xxxxyyyy', account!, 'refreshToken')
         console.log(JSON.stringify(token))
         expect(token !== null).toEqual(true)
         expect(token!.account !== null).toEqual(true)
-        expect(token!.phone).toBe('01075187260')
+        expect(token!.phone).toBe('010xxxxyyyy')
         expect(token!.token).toBe('refreshToken')
     })
 
     it('RefreshToken 조회 ', async () => {
         const token = await repository.checkRefreshToken('refreshToken')
         expect(token !== null).toEqual(true)
-        expect(token!.phone).toBe('01075187260')
+        expect(token!.phone).toBe('010xxxxyyyy')
         expect(token!.token).toBe('refreshToken')
     })
 
@@ -49,21 +54,21 @@ describe('UserDetail DB TestSuite', () => {
         expect(data!.profileId).toBe(1)
     })
 
-    it('RefreshToken 조회 ( 존재하지 않는 token ) ', async () => {
+    it('RefreshToken 조회 ( 존재하지 않는 phone ) ', async () => {
         const token = await repository.checkRefreshToken('token')
         expect(token === null).toEqual(true)
     })
 
-    it('RefreshToken 삭제 ( 존재하지 않는 token ) ', async () => {
-        await repository.deleteToken('token')
+    it('RefreshToken 삭제 ( 존재하지 않는 phone ) ', async () => {
+        await repository.deleteToken('010yyyyzzzz')
         const tokenCount = await repository.count()
         expect(tokenCount).toBe(1)
     })
 
     it('RefreshToken 삭제 ', async () => {
-        await repository.deleteToken('RefreshToken')
+        await repository.deleteToken(user1.phone)
         const tokenCount = await repository.count()
-        const token = await repository.checkRefreshToken('token')
+        const token = await repository.checkRefreshToken('refreshToken')
         expect(tokenCount).toBe(0)
         expect(token === null).toEqual(true)
     })
