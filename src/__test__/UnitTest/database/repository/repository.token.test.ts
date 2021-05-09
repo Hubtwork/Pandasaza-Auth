@@ -1,9 +1,6 @@
 import { getCustomRepository } from "typeorm"
-import TokenService from "../../../../app/services/service.token"
 import { AccountRepository } from "../../../../database/repository/repository.account"
 import { RefreshTokenRepository } from "../../../../database/repository/repository.token.refresh"
-import { UserRepository } from "../../../../database/repository/repository.user"
-import { UserProfileRepository } from "../../../../database/repository/repository.user.profile"
 import UserDTO from "../../../../interfaces/interface.DTO.user"
 
 import '../../../database.setup'
@@ -45,13 +42,6 @@ describe('UserDetail DB TestSuite', () => {
         expect(token !== null).toEqual(true)
         expect(token!.phone).toBe('010xxxxyyyy')
         expect(token!.token).toBe('refreshToken')
-    })
-
-    it('RefreshToken 연동 계정 데이터 조회 ', async () => {
-        const data = await repository.getReferenceData('refreshToken')
-        expect(data !== null).toEqual(true)
-        expect(data!.userId).toBe(1)
-        expect(data!.profileId).toBe(1)
     })
 
     it('RefreshToken 조회 ( 존재하지 않는 phone ) ', async () => {
