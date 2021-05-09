@@ -1,80 +1,15 @@
 import express, { Request, Response, NextFunction } from 'express';
 import * as bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
 
 import { ValidationError} from 'class-validator'
-
-import Controller from './interfaces/controller'
-import { normalizePort } from './utils/helpers'
 import { ApiError, BadRequestError, InternalError } from './core/responses/response.Error'
 import { server } from './utils/environments'
 import { Logger } from './utils/logger';
-import { Database } from './config/database';
-import errorMiddleware from './app/middlewares/error.middlewares';
-import NotFoundException from './app/exceptions/network/NotFoundException';
+import { Database } from './config/database'
 
 import mainRouter from './app/routes/routes.index'
 
 import morgan = require('morgan')
-
-export class App {
-  
-  private logger: Logger = new Logger()
-  public app: express.Application
-  
-  constructor(){
-    this.app = express()
-  }
-
-  public listen() {
-    const port: number = normalizePort(server.port)    
-    this.app.listen(port, () => {
-      this.logger.info(`App starts Listening on Port ${port}`)
-      this.logger.info(`App is running on ${process.env.NODE_ENV}`)
-    })
-  }
-
-  private attatchMiddlewares() {
-    this.app.use(morgan('dev'))
-    this.app.use(bodyParser.json)
-    this.app.use(cookieParser())
-    this.logger.info(`Middlewares Adapted`)
-  }
-
-  private attatchInterceptors() {
-    this.app.use(function (req, res, next) {
-      var err = new Error('Not Found');
-      res.status(404).json({
-        error: 'Not Found'
-      })
-      next(err);
-    })
-    this.app.use(errorMiddleware)
-    this.logger.info(`Interceptors Adapted`)
-  }
-
-  public attatchControllers(controllers: Controller[]) {
-    this.attatchMiddlewares()
-    controllers.forEach((controller) => {
-      this.app.use('/', controller.router)
-    })
-    // catch 404 and forward to error handler
-    this.app.use((req, res, next) => next(new NotFoundException()))
-    this.logger.info(`Controllers Adapted`)
-    this.attatchInterceptors()
-  }
-
-  public async attatchDBConnection() {
-    if (!process.env.NODE_ENV) process.env.NODE_ENV = 'development'
-
-    await Database.getConnection()
-    .then()
-    .catch((error) => {
-      this.logger.error(error)
-    })
-  }
-
-}
 
 // export default App
 

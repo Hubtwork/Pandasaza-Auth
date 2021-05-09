@@ -10,11 +10,11 @@ import { AccountRepository } from "../../database/repository/repository.account"
 
 export default class JWT {
 
-    private static encode(payload: UserPayload, key: string, expiration: string): string {
+    public static encode(payload: UserPayload, key: string, expiration: string): string {
         return sign(payload, key, { issuer: 'pandaSaza', algorithm: 'HS256', expiresIn: expiration })
     }
 
-    private static decode(token: string): Promise<JwtPayload> {
+    public static decode(token: string): Promise<JwtPayload> {
         return new Promise<JwtPayload>( (resolve, reject) => {
             const payload = verify(token, String(jwt.access_key), { ignoreExpiration: true ,algorithms: ['HS256'], issuer: 'pandaSaza' }, (error, decoded) => {
                 if (error) {
@@ -26,7 +26,7 @@ export default class JWT {
         })
     }
 
-    private static async validate(token: string, key: string): Promise<JwtPayload> {
+    public static async validate(token: string, key: string): Promise<JwtPayload> {
         return new Promise<JwtPayload>( (resolve, reject) => {
             const payload = verify(token, key, { algorithms: ['HS256'], issuer: 'pandaSaza' }, (error, decoded) => {
                 if (error) {

@@ -1,7 +1,4 @@
 import { EntityRepository, getCustomRepository, Repository } from "typeorm";
-import DBJoinException from "../../app/exceptions/database/DBJoinException";
-import { NotFoundError } from "../../core/responses/response.Error";
-import TokenizedData from "../../interfaces/interface.token.data";
 import { Logger } from "../../utils/logger";
 import { Account } from "../entities/entity.account";
 import { RefreshToken } from "../entities/entity.token.refresh";
@@ -28,25 +25,6 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
             return this.save(token)
         } catch(error) {
             this.logger.error(`[DB] create RefreshToken of Phone ${phone} failed`)
-            return null
-        }
-    }
-
-    public async getReferenceData(token: string): Promise<TokenizedData | null> {
-        try {
-            const refreshToken = await this.findOneOrFail({ where: { token: token}, relations: ['account', 'account.user', 'account.user.profile']})
-            const account = refreshToken.account
-            if( account && account.user && account.user.profile ) {
-                const tokenizedData: TokenizedData = {
-                    phone: account.phone,
-                    accountId: account.accountId,
-                    userId: account.user.uId,
-                    profileId: account.user.profile.profileId
-                }
-                return tokenizedData
-            } else { throw new DBJoinException() }
-        } catch(error) {
-            this.logger.error(`[DB] RefreshToken reference Failed`)
             return null
         }
     }
