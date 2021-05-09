@@ -46,7 +46,7 @@ export default class MockJWT {
         return { accessToken, refreshToken }
     }
 
-    public static async renewAccessToken(expiredAccessToken: string, refreshToken: string, key: string): Promise<Tokens> {
+    public static async renewAccessToken(expiredAccessToken: string, refreshToken: string): Promise<Tokens> {
         // original access token check
         const expiredAccessTokenPayload = await this.decode(expiredAccessToken)
         if (!expiredAccessTokenPayload) throw new BadTokenError()
