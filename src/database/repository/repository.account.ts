@@ -3,11 +3,10 @@ import { Account } from '../entities/entity.account'
 import { User } from '../entities/entity.user'
 import { Logger } from '../../utils/logger'
 import { UserRepository } from './repository.user'
-import TokenizedData from '../../interfaces/interface.token.data'
-import InternerServerException from '../../app/exceptions/network/InternalServerException'
 import UserDTO from '../../interfaces/interface.DTO.user'
 import { UserProfileRepository } from './repository.user.profile'
 import { validate } from 'class-validator'
+import { InternalError } from '../../core/responses/response.Error'
 
 @EntityRepository(Account)
 export class AccountRepository extends Repository<Account> {
@@ -42,21 +41,6 @@ export class AccountRepository extends Repository<Account> {
             return this.save(account)
         } catch(error) {
             this.logger.error(`[DB] insert Account with \'${JSON.stringify(userDTO.phone)}\' failed`)
-            return null
-        }
-    }
-
-    public async getTokenData(phoneNumber: string): Promise<TokenizedData | null> {
-        try {
-            const account = await this.findOneOrFail({where: {phone: phoneNumber}, relations:['user', 'user.profile']})
-            if ( !account || !(account.user) || !(account.user.profile) ) throw new InternerServerException()
-            return {
-                phone: phoneNumber,
-                accountId: account.accountId,
-                userId: account.user.uId,
-                profileId: account.user.profile.profileId
-            }
-        } catch(error) {
             return null
         }
     }

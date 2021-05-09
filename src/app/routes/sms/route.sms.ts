@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
+import { InternalError } from "../../../core/responses/response.Error";
 import { SMSResult } from "../../../types/return_types";
-import InternalServerException from "../../exceptions/network/InternalServerException";
 import { SmsService } from "../../services/service.sms";
 
 
@@ -23,7 +23,7 @@ smsRouter.get('/validate/:phone',
             const smsResult: SMSResult = await service.callExternalSmsService(phone)
             res.status(200).json(smsResult)
         } catch (error) {
-            next(new InternalServerException())
+            next(new InternalError())
         }
     }
 )
@@ -39,7 +39,7 @@ smsRouter.get('/authenticate/:phone',
                 registered: 'false'
             }) }
         } catch (error) {
-            next(new InternalServerException())
+            next(new InternalError())
         }
     }
 )
