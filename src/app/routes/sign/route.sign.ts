@@ -6,10 +6,11 @@ import { SuccessMsgResponse, SuccessResponse, TokenRefreshResponse } from "../..
 import { BadRequestError, InternalError, NotFoundError } from "../../../core/responses/response.Error";
 import { AccountRepository } from "../../../database/repository/repository.account";
 import { RefreshTokenRepository } from "../../../database/repository/repository.token.refresh";
-import { UserRepository } from "../../../database/repository/repository.user";
-import { UserProfileRepository } from "../../../database/repository/repository.user.profile";
 import UserDTO from "../../../interfaces/interface.DTO.user";
 import { getAccessToken, validateUserDTO } from "../../utils/validateUtils";
+import validateLogout from "../../validation/validate.logout";
+import validateRefreshToken from "../../validation/validate.refreshToken";
+import validateRegister from "../../validation/validate.register";
 
 
 /*
@@ -19,12 +20,15 @@ import { getAccessToken, validateUserDTO } from "../../utils/validateUtils";
 
 */
 
-const authRouter = express.Router()
+const signRouter = express.Router()
 
-authRouter.get('/login/:phone',
+signRouter.get('/login/:phone',
     async function (req: Request, res: Response, next: NextFunction) {
         try {
             const phone = req.params.phone
+
+            const tokenInDB = await getCustomRepository(RefreshTokenRepository).checkIsLoggedIn(phone)
+            if (tokenInDB) throw new BadRequestError('Already logged in')
 
             const account = await getCustomRepository(AccountRepository).getAccountByPhone(phone)
             if ( !account ) throw new BadRequestError(`No Account with ${phone}`)
@@ -36,8 +40,8 @@ authRouter.get('/login/:phone',
             const tokens = await JWT.createTokens(payload)
 
             res.status(200).json({
-                user: phone,
-                currectRoute: 'SignIN'
+                user: account.accountId,
+                tokens: tokens
             })
         } catch (error) {
             next(error)
@@ -45,24 +49,12 @@ authRouter.get('/login/:phone',
     }
 )
 
-authRouter.post('/logout',
+signRouter.post('/logout',
+    validateLogout,
     async function (req: Request, res: Response, next: NextFunction) {
         try {
-            if (
-                Object.keys(req.body).length != 1 ||
-                !req.body ||
-                !req.body.phone
-            ) throw new BadRequestError('Invalid Request Body ')
-            next()
-        } catch(error) {
-            next(error)
-        }
-    },
-    async function (req: Request, res: Response, next: NextFunction) {
-        try {
-            
             const delResult = await getCustomRepository(RefreshTokenRepository).deleteToken(req.body.phone)
-            if (!delResult) throw new InternalError('DB Error')
+            if (!delResult) throw new InternalError(`No signed user with ${req.body.phone}`)
             new SuccessMsgResponse(`${req.body.phone} logout Successfully`).send(res)
         } catch(error) {
             next(error)
@@ -70,18 +62,8 @@ authRouter.post('/logout',
     }
 )
 
-authRouter.post('/register',
-    async function (req: Request, res: Response, next: NextFunction) {
-        try {
-            if (Object.keys(req.body).length > 5) throw new BadRequestError('Invalid Request Body')
-            const userDTO = req.body as UserDTO
-            if ( !validateUserDTO(userDTO) ) throw new BadRequestError('Invalid Request Body')
-            req.body = userDTO
-            next()
-        } catch(error) {
-            next(error)
-        }
-    },
+signRouter.post('/register',
+    validateRegister,
     async function (req: Request, res: Response, next: NextFunction) {
 
         const userDTO = req.body as UserDTO
@@ -106,7 +88,8 @@ authRouter.post('/register',
     }
 )
 
-authRouter.post('/refresh', 
+signRouter.post('/refresh', 
+    validateRefreshToken,
     async function (req: Request, res: Response, next: NextFunction) {
         try {
             const accessToken = getAccessToken(req.headers.authorization)
@@ -122,4 +105,4 @@ authRouter.post('/refresh',
     }
 )
 
-export default authRouter
+export default signRouter

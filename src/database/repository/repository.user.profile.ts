@@ -2,6 +2,8 @@ import { EntityRepository, Repository } from "typeorm"
 import { UserProfile } from "../entities/entity.user.profile"
 import { Logger } from "../../utils/logger"
 import { validate } from "class-validator"
+import { timeStamp } from "node:console"
+import { NotFoundError } from "../../core/responses/response.Error"
 
 
 @EntityRepository(UserProfile)
@@ -31,6 +33,18 @@ export class UserProfileRepository extends Repository<UserProfile> {
             this.logger.error(`[DB] insert UserProfile with \'${JSON.stringify(profileName)}\' failed`)
             return null
         }
+    }
+
+    public async updateUserProfile(
+        profileId: number,
+        profileName: string,
+        profileImage: string
+    ): Promise<UserProfile> {
+        const userProfile = await this.getUserProfile(profileId)
+        if (!userProfile) throw new NotFoundError('Profile Not Found')
+        userProfile.profileName = profileName
+        userProfile.profileImage = profileImage
+        return this.save(userProfile)
     }
 
     public async getUserProfile(profileId: number): Promise<UserProfile | null> {

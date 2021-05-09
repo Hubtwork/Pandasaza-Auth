@@ -71,8 +71,8 @@ export default class JWT {
             accountId: refreshTokenPayload.accountId
         }
         // if refreshToken's expiration time under 4days.
-        if ( (refreshTokenPayload.exp - refreshTokenPayload.iat) < ( 4 * 24 * 60 * 60 ) ) {
-            const delResult = await getCustomRepository(RefreshTokenRepository).deleteToken(refreshToken)
+        if ( (refreshTokenPayload.exp - Math.floor(Date.now()/1000)) < ( 4 * 24 * 60 * 60 ) ) {
+            const delResult = await getCustomRepository(RefreshTokenRepository).deleteToken(refreshTokenInDB.tokenId)
             if (!delResult) throw new InternalError()
             const tokens = await this.createTokens(payload)
             return tokens

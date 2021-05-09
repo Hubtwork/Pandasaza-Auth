@@ -29,6 +29,15 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
         }
     }
 
+    public async checkIsLoggedIn(phone: string): Promise<boolean> {
+        try {
+            const refreshToken = await this.findOneOrFail({ where: { phone: phone }})
+            return true
+        } catch(error) {
+            return false
+        }
+    }
+
     public async checkRefreshToken(token: string): Promise<RefreshToken | null> {
         try {
             const refreshToken = await this.findOneOrFail({ where: { token: token }})
@@ -39,14 +48,14 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
         }
     }
 
-    public async deleteToken(phone: string): Promise<boolean> {
+    public async deleteToken(tokenId: string): Promise<boolean> {
         try {
-            const token = await this.findOneOrFail({ where: {phone: phone}})
+            const token = await this.findOneOrFail({ where: {tokenId: tokenId}})
             if (!token) throw new Error('token Not found')
-            await this.delete(token.tokenId)
+            await this.delete(tokenId)
             return true
         } catch(error) {
-            this.logger.error(`[DB] delete Token of User { \'${phone}\' } failed`)
+            this.logger.error(`[DB] delete Token of User { \'${tokenId}\' } failed`)
             return false
         }
     }

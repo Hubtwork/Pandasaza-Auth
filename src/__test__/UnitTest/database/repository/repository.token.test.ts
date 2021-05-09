@@ -56,9 +56,10 @@ describe('UserDetail DB TestSuite', () => {
     })
 
     it('RefreshToken 삭제 ', async () => {
-        await repository.deleteToken(user1.phone)
-        const tokenCount = await repository.count()
         const token = await repository.checkRefreshToken('refreshToken')
+        await repository.deleteToken(token!.tokenId)
+        const tokenCount = await repository.count()
+        const deletedToken = await repository.checkRefreshToken('refreshToken')
         expect(tokenCount).toBe(0)
         expect(token === null).toEqual(true)
     })

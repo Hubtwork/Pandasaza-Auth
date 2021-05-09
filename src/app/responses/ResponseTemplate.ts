@@ -1,2 +1,0 @@
-import ErrorTemplate from './ErrorTemplate'
-
