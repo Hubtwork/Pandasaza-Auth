@@ -2,7 +2,9 @@ import { JwtPayload } from "../../core/jwt/jwt.payload"
 import { AuthFailureError, BadRequestError } from "../../core/responses/response.Error"
 import UserDTO from "../../interfaces/interface.DTO.user"
 
+export const validationErrorMessage = (error: Error) => {
 
+}
 
 export const getAccessToken = (authorization?: string) => {
     if (!authorization) throw new AuthFailureError('AccessToken needed')
@@ -10,6 +12,10 @@ export const getAccessToken = (authorization?: string) => {
     return authorization.split(' ')[1]
 }
 
+export const getRefreshToken = (refreshToken?: string) => {
+    if (!refreshToken) throw new AuthFailureError('RefreshToken needed')
+    return refreshToken
+}
 
 export const validateTokenData = (payload?: JwtPayload) => {
     if (
