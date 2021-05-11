@@ -21,9 +21,9 @@ export class User extends BaseEntity {
     @Column()
     nationality!: string
 
-    @CreateDateColumn({nullable: false})
-    registeredAt!: Date
+    @Column({ nullable : false })
+    registeredAt!: string
 
-    @UpdateDateColumn({nullable: false})
-    updatedAt!: Date
+    @Column({ nullable : false })
+    updatedAt!: string
 }

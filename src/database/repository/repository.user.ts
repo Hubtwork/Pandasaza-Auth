@@ -29,7 +29,8 @@ export class UserRepository extends Repository<User> {
         nationality: string
         ): Promise<User | null> {
         try {
-            const userDetail = this.create({profile, school, nationality})
+            const currentTimeStamp = new Date().getTime().toString()
+            const userDetail = this.create({profile, school, nationality, registeredAt: currentTimeStamp, updatedAt: currentTimeStamp })
             return this.save(userDetail)
         } catch(error) {
             this.logger.error(`[DB] insert UserDetail with \'${JSON.stringify(profile)}\' failed`)
@@ -51,7 +52,8 @@ export class UserRepository extends Repository<User> {
     public async updateInnerData(uId: number): Promise<User | null> {
         try {
             const userDetail = await this.findOneOrFail({where: { uId: uId }, relations: ['profile'] })
-            userDetail.updatedAt = new Date()
+            const currentTimeStamp = new Date().getTime().toString()
+            userDetail.updatedAt = currentTimeStamp
             return this.save(userDetail)
         } catch(error) {
             this.logger.error(`[DB] UserDetail with \'${uId}\' not Found`)

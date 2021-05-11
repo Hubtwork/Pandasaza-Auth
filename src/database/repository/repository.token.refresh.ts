@@ -8,20 +8,11 @@ import { AccountRepository } from "./repository.account";
 export class RefreshTokenRepository extends Repository<RefreshToken> {
     private logger = new Logger()
 
-    public async registerToken(phone: string, account: Account, refreshToken: string): Promise<RefreshToken | null> {
-        try {
-            const token = this.create({ phone: phone, account: account, token: refreshToken})
-            return this.save(token)
-        } catch(error) {
-            this.logger.error(`[DB] create RefreshToken of Phone ${phone} failed`)
-            return null
-        }
-    }
-
     public async createRefreshToken(phone: string, accountId: string, refreshToken: string): Promise<RefreshToken | null> {
         try {
             const account = await getCustomRepository(AccountRepository).getAccountByAccountId(accountId)
-            const token = this.create({ phone: phone, account: account!, token: refreshToken})
+            const currentTimeStamp = new Date().getTime().toString()
+            const token = this.create({ phone: phone, account: account!, token: refreshToken, issuedAt: currentTimeStamp })
             return this.save(token)
         } catch(error) {
             this.logger.error(`[DB] create RefreshToken of Phone ${phone} failed`)

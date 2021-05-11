@@ -81,7 +81,12 @@ signRouter.post('/register',
             }
             const loadedAccount = await getCustomRepository(AccountRepository).getAccountByAccountId(newAccount.accountId)
             const tokens = await JWT.createTokens(userPayload)
-            new SuccessResponse('Registered Successfully', { account: loadedAccount, tokens: tokens }).send(res)
+            new SuccessResponse('Registered Successfully', 
+            { 
+                phone: newAccount.phone, 
+                account: loadedAccount, 
+                tokens: tokens 
+            }).send(res)
         } catch(error) {
             next(error)
         }
@@ -98,7 +103,7 @@ signRouter.post('/refresh',
             const refreshToken = req.body.refreshToken
             const tokens = await JWT.renewAccessToken(accessToken, refreshToken)
 
-            new TokenRefreshResponse('Token Issued Successfully', tokens.accessToken, tokens.refreshToken).send(res)
+            new TokenRefreshResponse('Token Issued Successfully', tokens).send(res)
         } catch(error) {
             next(error)
         }
