@@ -48,14 +48,14 @@ export class RefreshTokenRepository extends Repository<RefreshToken> {
         }
     }
 
-    public async deleteToken(tokenId: string): Promise<boolean> {
+    public async deleteToken(phone: string): Promise<boolean> {
         try {
-            const token = await this.findOneOrFail({ where: {tokenId: tokenId}})
+            const token = await this.findOneOrFail({ where: {phone: phone}})
             if (!token) throw new Error('token Not found')
-            await this.delete(tokenId)
+            await this.delete(token.tokenId)
             return true
         } catch(error) {
-            this.logger.error(`[DB] delete Token of User { \'${tokenId}\' } failed`)
+            this.logger.error(`[DB] delete Token of User { \'${phone}\' } failed`)
             return false
         }
     }

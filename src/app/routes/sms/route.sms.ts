@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import { SuccessResponse } from "../../../core/responses/response.API";
 import { InternalError } from "../../../core/responses/response.Error";
 import { SMSResult } from "../../../types/return_types";
 import { SmsService } from "../../services/service.sms";
@@ -21,7 +22,7 @@ smsRouter.get('/validate/:phone',
         const phone = req.params.phone
         try {
             const smsResult: SMSResult = await service.callExternalSmsService(phone)
-            res.status(200).json(smsResult)
+            new SuccessResponse('SMS validation sent', smsResult).send(res)
         } catch (error) {
             next(new InternalError())
         }
@@ -33,11 +34,8 @@ smsRouter.get('/authenticate/:phone',
         const phone = req.params.phone
         try {
             const searchedAccount = await service.scanAccount(phone)
-            if (searchedAccount) { res.redirect(`/sign/logIn/${phone}`) }
-            else { res.status(200).json({
-                phone: phone,
-                registered: 'false'
-            }) }
+            if (searchedAccount) { new SuccessResponse('authenticated success', { phone: phone, registered: true}).send(res) }
+            else { new SuccessResponse('authenticated success', { phone: phone, registered: false}).send(res) }
         } catch (error) {
             next(new InternalError())
         }
