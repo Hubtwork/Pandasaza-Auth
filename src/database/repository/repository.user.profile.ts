@@ -27,7 +27,8 @@ export class UserProfileRepository extends Repository<UserProfile> {
         profileImage: string
         ): Promise<UserProfile | null> {
         try {
-            const userProfile = this.create({profileName, profileImage})
+            const currentTimeStamp = new Date().getTime().toString()
+            const userProfile = this.create({profileName, profileImage, registeredAt: currentTimeStamp, updatedAt: currentTimeStamp })
             return this.save(userProfile)
         } catch(error) {
             this.logger.error(`[DB] insert UserProfile with \'${JSON.stringify(profileName)}\' failed`)
@@ -42,8 +43,10 @@ export class UserProfileRepository extends Repository<UserProfile> {
     ): Promise<UserProfile> {
         const userProfile = await this.getUserProfile(profileId)
         if (!userProfile) throw new NotFoundError('Profile Not Found')
+        const currentTimeStamp = new Date().getTime().toString()
         userProfile.profileName = profileName
         userProfile.profileImage = profileImage
+        userProfile.updatedAt = currentTimeStamp
         return this.save(userProfile)
     }
 
@@ -51,22 +54,6 @@ export class UserProfileRepository extends Repository<UserProfile> {
         try {
             const userProfile = await this.findOneOrFail({profileId: profileId})
             return userProfile
-        } catch(error) {
-            this.logger.error(`[DB] UserProfile with \'${profileId}\' not Found`)
-            return null
-        }
-    }
-
-    public async changeUserProfile(profileId: number, profileName: string, profileImage: string): Promise<UserProfile | null> {
-        try {
-            const userProfile = await this.findOneOrFail({profileId: profileId})
-            // upsert userProfile
-            if (userProfile) {
-                userProfile.profileName = profileName
-                userProfile.profileImage = profileImage
-                return this.save(userProfile)
-            }
-            return null
         } catch(error) {
             this.logger.error(`[DB] UserProfile with \'${profileId}\' not Found`)
             return null

@@ -37,7 +37,8 @@ export class AccountRepository extends Repository<Account> {
             if (!profile) throw new Error('Profile Insertion Error')
             const user = await getCustomRepository(UserRepository).insertUserDetail(profile, userDTO.school, userDTO.nationality)
             if (!user) throw new Error('User Insertion Error')
-            const account = this.create({phone: userDTO.phone, user: user})
+            const currentTimeStamp = new Date().getTime().toString()
+            const account = this.create({phone: userDTO.phone, user: user, registeredAt: currentTimeStamp })
             return this.save(account)
         } catch(error) {
             this.logger.error(`[DB] insert Account with \'${JSON.stringify(userDTO.phone)}\' failed`)

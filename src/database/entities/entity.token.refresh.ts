@@ -19,8 +19,8 @@ export class RefreshToken extends ValidationEntity {
     @JoinColumn({name: 'account'})
     account!: Account
 
-    @CreateDateColumn({nullable: false})
-    issuedAt!: Date
+    @Column({ nullable : false })
+    issuedAt!: string
 
     public hashingToken() { this.token = bcrypt.hashSync(this.token, 8) }
 

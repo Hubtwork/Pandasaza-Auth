@@ -1,6 +1,7 @@
 
 
 import { Response } from 'express'
+import { Tokens } from '../jwt/jwt.payload';
 
 
 // API custom Code
@@ -125,7 +126,7 @@ export class AccessTokenErrorResponse extends ApiResponse {
 
 export class TokenRefreshResponse extends ApiResponse {
 
-    constructor(message: string, private accessToken: string, private refreshToken: string) {
+    constructor(message: string, private tokens: Tokens) {
         super(ApiStatusCode.SUCCESS, HttpStatusCode.SUCCESS, message);
     }
 

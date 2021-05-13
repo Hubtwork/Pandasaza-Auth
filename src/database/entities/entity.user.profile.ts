@@ -17,9 +17,9 @@ export class UserProfile extends BaseEntity {
     @Column({ type: 'text'})
     profileImage!: string
 
-    @CreateDateColumn({nullable: false})
-    registeredAt!: Date
+    @Column({ nullable : false })
+    registeredAt!: string
 
-    @UpdateDateColumn({nullable: false})
-    updatedAt!: Date
+    @Column({ nullable : false })
+    updatedAt!: string
 }

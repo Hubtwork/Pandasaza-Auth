@@ -16,6 +16,6 @@ export class Account extends BaseEntity {
     @Length(10, 11)
     phone!: string
 
-    @CreateDateColumn({nullable: false})
-    registeredAt!: Date
+    @Column({ nullable : false })
+    registeredAt!: string
 }
