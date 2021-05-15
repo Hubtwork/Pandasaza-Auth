@@ -2,7 +2,6 @@ import { EntityRepository, Repository } from "typeorm"
 import { UserProfile } from "../entities/entity.user.profile"
 import { Logger } from "../../utils/logger"
 import { validate } from "class-validator"
-import { timeStamp } from "node:console"
 import { NotFoundError } from "../../core/responses/response.Error"
 
 
