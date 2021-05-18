@@ -6,10 +6,16 @@ const imageRouter = express.Router()
 
 imageRouter.put(
     '/profileImage', 
+    function (req: Request, res: Response, next: NextFunction) {
+        console.log(req)
+        next()
+    },
     uploadProfileImage.single('profile'),
     function (req: Request, res: Response, next: NextFunction) {
         const image = req.file as Express.MulterS3.File
         console.log(image)
+        console.log(req.headers)
+        console.log(req.body)
         if (!image) res.status(400).json('Image Undefined')
         else res.status(200).json(
             {
@@ -24,6 +30,7 @@ imageRouter.put(
     '/productImage', 
     uploadProductImages.array('product', 10),
     function (req: Request, res: Response, next: NextFunction) {
+        
         const images = req.files as Express.MulterS3.File[]
         console.log(images.map(it => it.location))
         if (!images || images.length == 0) res.status(400).json('Image Undefined')

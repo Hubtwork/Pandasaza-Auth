@@ -3,6 +3,7 @@ import smsRouter from "./sms/route.sms";
 import authRouter from './sign/route.sign'
 import serviceRouter from "./services/route.service";
 import imageRouter from "./services/route.image";
+import configurationRouter from "./services/route.image.work";
 
 
 
@@ -15,5 +16,7 @@ router.use('/service', serviceRouter)
 
 router.use('/imageUpload', imageRouter)
 
+// user configuration
+router.use('/configuration', configurationRouter)
 
 export default router

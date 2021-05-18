@@ -8,3 +8,8 @@ export default interface UserDTO {
     school: string
     nationality: string
 }
+
+export interface ProfileDTO {
+    profileName: string
+    profileImage: string
+}
