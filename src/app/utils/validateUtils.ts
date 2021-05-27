@@ -35,7 +35,7 @@ export const validateUserDTO = (userDTO?: UserDTO) => {
         !userDTO ||
         !userDTO.phone ||
         !userDTO.profileName ||
-        !userDTO.profileImg ||
+        !userDTO.profileImage ||
         !userDTO.nationality ||
         !userDTO.school 
         // User DTO validations for each data

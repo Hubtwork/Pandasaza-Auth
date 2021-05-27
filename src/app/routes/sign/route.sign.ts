@@ -7,6 +7,7 @@ import { BadRequestError, InternalError, NotFoundError } from "../../../core/res
 import { AccountRepository } from "../../../database/repository/repository.account";
 import { RefreshTokenRepository } from "../../../database/repository/repository.token.refresh";
 import UserDTO from "../../../interfaces/interface.DTO.user";
+import { uploadProfileImage } from "../../services/service.upload.image";
 import { getAccessToken, validateUserDTO } from "../../utils/validateUtils";
 import validateLogout from "../../validation/validate.logout";
 import validateRefreshToken from "../../validation/validate.refreshToken";
@@ -41,7 +42,7 @@ signRouter.get('/login/:phone',
 
             new SuccessResponse('login success', {
                 phone: phone,
-                account: account,
+                accountId: account.accountId,
                 tokens: tokens
             }).send(res)
         } catch (error) {
@@ -64,9 +65,9 @@ signRouter.post('/logout',
 )
 
 signRouter.post('/register',
+    uploadProfileImage.single('profileImage'),
     validateRegister,
     async function (req: Request, res: Response, next: NextFunction) {
-
         const userDTO = req.body as UserDTO
         try {
             const account = await getCustomRepository(AccountRepository).getAccountByPhone(userDTO.phone)
@@ -79,12 +80,11 @@ signRouter.post('/register',
                 phone: newAccount.phone,
                 accountId: newAccount.accountId
             }
-            const loadedAccount = await getCustomRepository(AccountRepository).getAccountByAccountId(newAccount.accountId)
             const tokens = await JWT.createTokens(userPayload)
             new SuccessResponse('Registered Successfully', 
             { 
                 phone: newAccount.phone, 
-                account: loadedAccount, 
+                accountId: newAccount.accountId, 
                 tokens: tokens 
             }).send(res)
         } catch(error) {
