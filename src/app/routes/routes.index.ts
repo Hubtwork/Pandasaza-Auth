@@ -4,7 +4,7 @@ import authRouter from './sign/route.sign'
 import serviceRouter from "./services/route.service";
 import imageRouter from "./services/route.image";
 import configurationRouter from "./services/route.configuration";
-import testRouter from "./route.test";
+import testRouter from "./routes.test";
 
 
 
