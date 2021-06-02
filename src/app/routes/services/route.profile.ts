@@ -8,6 +8,8 @@ import validateChangeProfile from "../../validation/validate.changeProfile";
 import _ from 'lodash'
 import validateShowProfile from "../../validation/validate.showProfile";
 import { NotFoundError } from "../../../core/responses/response.Error";
+import { uploadProfileImage } from "../../services/service.upload.image";
+import { ProfileDTO } from "../../../interfaces/interface.DTO.user";
 
 
 const profileRouter = express.Router()
@@ -27,18 +29,6 @@ profileRouter.get('/my',
         console.log(req.body)
         const account = await getCustomRepository(AccountRepository).getAccountByAccountId(req.body.accountId)
         const profile = account!.user!.profile
-        new SuccessResponse('success', _.pick(profile, ['profileName', 'profileImage'])).send(res)
-    }
-)
-
-profileRouter.put('/', 
-    validateChangeProfile,
-    async function (req: Request, res: Response, next: NextFunction) {
-        const profileId = req.body.profileId
-        const profileName = req.body.profileName
-        const profileImg = req.body.profileImage
-
-        const profile = await getCustomRepository(UserProfileRepository).updateUserProfile(profileId, profileName, profileImg)
         new SuccessResponse('success', _.pick(profile, ['profileName', 'profileImage'])).send(res)
     }
 )

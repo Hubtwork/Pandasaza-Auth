@@ -29,11 +29,11 @@ export class AccountRepository extends Repository<Account> {
         try {
             // for avoiding just creating dummy profile / user
             // validate first
-            const profileValid = await getCustomRepository(UserProfileRepository).validate(userDTO.profileName, userDTO.profileImg)
+            const profileValid = await getCustomRepository(UserProfileRepository).validate(userDTO.profileName, userDTO.profileImage)
             const userValid = await getCustomRepository(UserRepository).validate(userDTO.school, userDTO.nationality)
             const accountValid = await this.validate(userDTO.phone)
             if (!profileValid || !userValid || !accountValid) throw new Error('Validation Error')
-            const profile = await getCustomRepository(UserProfileRepository).insertUserProfile(userDTO.profileName, userDTO.profileImg)
+            const profile = await getCustomRepository(UserProfileRepository).insertUserProfile(userDTO.profileName, userDTO.profileImage)
             if (!profile) throw new Error('Profile Insertion Error')
             const user = await getCustomRepository(UserRepository).insertUserDetail(profile, userDTO.school, userDTO.nationality)
             if (!user) throw new Error('User Insertion Error')

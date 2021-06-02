@@ -28,3 +28,13 @@ export const jwt = {
   refresh_key: process.env.REFRESH_TOKEN_SECRET,
   refresh_life: process.env.REFRESH_TOKEN_LIFE
 }
+
+export const objectstorage = {
+  accessKey: process.env.NCP_OS_KEY,
+  secretKey: process.env.NCP_OS_SECRET,
+  endpoint: process.env.NCP_OS_ENDPOINT,
+  region: process.env.NCP_OS_REGION,
+
+  imageBucket: process.env.NCP_OS_IMAGE_BUCKET,
+  profileImageDir: process.env.NCP_OS_PROFILE_IMAGE
+}
