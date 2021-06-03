@@ -42,6 +42,10 @@ export class SmsService {
     
     public async callExternalSmsService(targetPhone: string): Promise<SMSResult> {
         const code = this.generatePassword()
+
+        // Save Key-Value ( Phone-ValidationCode ) in In-Memory Cache
+        cache.put(targetPhone, code)
+
         const { isSuccess, data, errorMessage } = await this.smsClient.sendSMS({
             to: targetPhone,
             content: this.validationMessage(code)
